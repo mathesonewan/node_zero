@@ -15,6 +15,9 @@ const term = new Terminal({
   cursorBlink: true,
   cursorStyle: 'block',
   scrollback: 1000,  // Allow up to 1000 lines of scrollback history
+  screenKeys: true,   // Ensure that the terminal has keys that manage scrolling
+  convertEol: true,   // Proper handling of end-of-line characters
+  scrollSensitivity: 1 // Improve scrolling behavior
 });
 
 // Open the terminal inside the element with id "terminal"
@@ -101,7 +104,7 @@ function runCommand(input) {
     term.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
     term.writeln('...');
     prompt();
-    return;  // Stop further execution if "ifconfig" is typed
+    return;
   }
 
   // Handle 'ls' command: List directory contents
@@ -137,6 +140,13 @@ function runCommand(input) {
     }
   }
 
+  // Handle 'clear' command: Clear the terminal screen
+  else if (command === 'clear') {
+    term.clear();  // Clear the terminal's screen
+    prompt();  // Re-display the prompt
+    return;
+  }
+
   else {
     term.writeln(`Command not found: ${command}`);
   }
@@ -166,6 +176,10 @@ term.onKey(e => {
     commandBuffer += key;
     term.write(key);  // Write the key to the terminal
   }
+
+  // Scroll to the bottom and keep the cursor in place after each output
+  term.scrollToBottom();  // Ensure terminal scrolls to the bottom
+  fitAddon.fit();  // Ensure terminal resizes when the screen size changes
 });
 
 // Display the narrative text line by line
@@ -173,4 +187,5 @@ narrative.intro.forEach(line => {
   term.writeln(line);  // Output each line
 });
 
-prompt();  // Display the prompt after the narrative is shown
+// Display the prompt after narrative
+prompt();
