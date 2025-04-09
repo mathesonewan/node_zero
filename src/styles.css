@@ -21,6 +21,9 @@ body {
   animation: flicker 1.5s infinite;
   display: flex;
   flex-direction: column;
+  padding: 10px;  /* Adjust padding as necessary */
+  white-space: pre-wrap;  /* Preserve new lines and spaces */
+  text-align: left;  /* Ensure left alignment */
 }
 
 /* Add scanline effect and make sure it appears in front of the terminal */
