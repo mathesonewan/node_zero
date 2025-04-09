@@ -1,7 +1,13 @@
+/* Ensures the body takes up the full height of the screen */
 body {
   margin: 0;
   height: 100vh;
   background: #000;
+  font-family: 'Courier New', monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Prevents any overflow when animations occur */
 }
 
 #terminal {
@@ -13,8 +19,11 @@ body {
   text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
   position: relative;
   animation: flicker 1.5s infinite;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Add scanline effect and make sure it appears in front of the terminal */
 #terminal::before {
   content: "";
   position: absolute;
@@ -32,6 +41,7 @@ body {
   z-index: 2;
 }
 
+/* Scanline effect animation */
 #scanline {
   position: absolute;
   top: -10%;
@@ -43,8 +53,10 @@ body {
   pointer-events: none;
   z-index: 3;
   opacity: 0;
+  animation: scanline-move 2s linear infinite;
 }
 
+/* Scanline animation movement */
 @keyframes scanline-move {
   0% { top: -10%; opacity: 0; }
   10% { opacity: 1; }
@@ -53,6 +65,7 @@ body {
   100% { top: 110%; opacity: 0; }
 }
 
+/* Flicker effect for the terminal text */
 @keyframes flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
     opacity: 1;
