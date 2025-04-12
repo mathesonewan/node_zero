@@ -13,54 +13,55 @@ html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  position: relative;
 }
 
-/* --- Terminal --- */
+/* --- Terminal (xterm window) --- */
 #terminal {
   flex-grow: 1;
-  flex-shrink: 1;
-  min-width: 0; /* Allows it to shrink properly */
+  min-width: 0;
   height: 100%;
+  background: transparent;
   animation: flicker 8s infinite;
   position: relative;
   overflow: hidden;
+  transition: flex-grow 0.4s ease, width 0.4s ease;
 }
 
-/* --- Menu Wrapper (Button + Panel) --- */
+/* --- Menu Wrapper (button + panel) --- */
 #menuWrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 70px; /* Width of button initially */
   background: rgba(0, 0, 0, 0.85);
   border-left: 2px solid #00FF00;
-  transition: width 0.4s ease, transform 0.4s ease;
-  width: 70px; /* Button width initially */
-  min-width: 70px;
+  transition: width 0.4s ease;
 }
 
-/* When menu opens */
+/* Opened menu */
 #menuWrapper.open {
-  width: 320px; /* Button + Panel width */
+  width: 320px; /* Button (70px) + Panel (250px) */
 }
 
-/* --- Menu Toggle Button --- */
+/* --- Menu Button --- */
 #menuToggle {
   width: 70px;
-  height: 100px;
+  height: 100%;
   background: transparent;
   color: #00FF00;
   font-family: 'Courier New', monospace;
   font-size: 14px;
-  border: 2px solid #00FF00;
-  border-left: none;
-  text-align: center;
+  border: none;
+  border-left: 2px solid #00FF00;
   writing-mode: vertical-rl;
+  text-orientation: mixed;
   transform: rotate(180deg);
   cursor: pointer;
   flex-shrink: 0;
 }
 
-/* --- Menu Panel --- */
+/* --- Menu Panel (Notes Area) --- */
 #menuPanel {
   flex-grow: 1;
   width: 250px;
@@ -70,12 +71,12 @@ html, body {
   transition: transform 0.4s ease;
 }
 
-/* Slide panel into view when open */
+/* Slide menu panel into view */
 #menuWrapper.open #menuPanel {
   transform: translateX(0);
 }
 
-/* --- Menu Textarea --- */
+/* --- Notes Textarea --- */
 #menuArea {
   flex-grow: 1;
   width: 100%;
@@ -89,7 +90,7 @@ html, body {
   outline: none;
 }
 
-/* --- Scanline --- */
+/* --- CRT Effects (Scanlines, Noise, Burn-in) --- */
 #scanline {
   position: absolute;
   top: -10%;
@@ -105,7 +106,6 @@ html, body {
   animation: scanline-move 8s linear infinite;
 }
 
-/* --- Burn-in Layer --- */
 #burnin {
   position: absolute;
   top: 0;
@@ -118,7 +118,6 @@ html, body {
   z-index: 12;
 }
 
-/* --- Noise Layers --- */
 #noise, #noise2 {
   position: absolute;
   top: 0;
@@ -129,9 +128,11 @@ html, body {
   pointer-events: none;
   z-index: 15;
 }
+
 #noise {
   opacity: 0.2;
 }
+
 #noise2 {
   opacity: 0.05;
   animation: noiseMove 5s infinite linear;
@@ -142,6 +143,7 @@ html, body {
   0%, 49%, 51%, 100% { opacity: 1; }
   50% { opacity: 0.65; }
 }
+
 @keyframes scanline-move {
   0% { top: -10%; opacity: 0; }
   10% { opacity: 1; }
@@ -149,6 +151,7 @@ html, body {
   90% { opacity: 1; }
   100% { top: 110%; opacity: 0; }
 }
+
 @keyframes noiseMove {
   0% { background-position: 0 0; }
   100% { background-position: 10px 10px; }
@@ -156,9 +159,9 @@ html, body {
 
 /* --- Hide xterm.js internal scrollbar --- */
 #terminal .xterm-viewport {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 #terminal .xterm-viewport::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
