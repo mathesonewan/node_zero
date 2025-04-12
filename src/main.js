@@ -78,20 +78,50 @@ term.onKey(e => {
 // Output narrative intro slowly, then prompt
 
 async function outputIntro() {
+  // --- 1.5s pause before starting ---
+  await delay(1500);
+
   for (const line of narrative.intro) {
-    term.writeln(line);
-    await delay(200); // short delay between lines
+    await typeLine(line);
+    await delay(300); // Slightly longer pause between lines
   }
+
   prompt(); // Show prompt after intro
 }
 
-// Helper delay function
+// Typing each character slowly
+async function typeLine(line) {
+  for (const char of line) {
+    term.write(char);
+    await delay(30); // Delay between each character (30ms per character)
+
+    // --- Random tiny flicker ---
+    if (Math.random() < 0.03) { // 3% chance
+      tinyFlicker();
+    }
+  }
+  term.write('\r\n'); // Move to next line after full line typed
+}
+
+// Tiny flicker effect
+function tinyFlicker() {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+
+  terminal.style.opacity = '0.8';
+  setTimeout(() => {
+    terminal.style.opacity = '1';
+  }, 50);
+}
+
+// Delay helper
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Start the intro
 outputIntro();
+
 
 
 // --- Randomize Scanline Appearance + Movement ---
