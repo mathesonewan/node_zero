@@ -93,7 +93,7 @@ async function outputIntro() {
 async function typeLine(line) {
   for (const char of line) {
     term.write(char);
-    await delay(30); // Delay between each character (30ms per character)
+    await delay(20); // Delay between each character (30ms per character)
 
     // --- Random tiny flicker ---
     if (Math.random() < 0.03) { // 3% chance
@@ -261,3 +261,26 @@ function captureTerminal() {
 
 // Start burn-in updates
 updateBurnIn();
+
+// --- Hacker Notes Panel ---
+
+// --- Hacker Notes Panel Toggle ---
+
+document.getElementById('notesToggle').addEventListener('click', () => {
+  const panel = document.getElementById('notesPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+});
+
+// Auto-save notes to localStorage
+const notesArea = document.getElementById('notesArea');
+notesArea.addEventListener('input', () => {
+  localStorage.setItem('hackerNotes', notesArea.value);
+});
+
+// Load saved notes on startup
+window.addEventListener('load', () => {
+  if (notesArea) {
+    notesArea.value = localStorage.getItem('hackerNotes') || '';
+  }
+});
+
