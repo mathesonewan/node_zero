@@ -57,6 +57,11 @@ function prompt() {
 // --- Get Directory ---
 function getCurrentDir() {
   let dir = fileSystem['/'];
+
+  if (currentMachine) {
+    dir = dir.contents[currentMachine];
+  }
+
   for (const part of currentPath) {
     if (dir.type !== 'dir' || !dir.contents[part]) {
       return null;
@@ -65,6 +70,7 @@ function getCurrentDir() {
   }
   return dir;
 }
+
 
 function getDirFromPath(base, pathArray) {
   let current = base;
