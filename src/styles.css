@@ -41,7 +41,7 @@ html, body {
   right: 0;
   bottom: 0;
   background: url('https://www.transparenttextures.com/patterns/noisy.png'); /* Heavier visible noise */
-  opacity: 0.08; /* Stronger CRT static */
+  opacity: 0.2; /* Stronger CRT static */
   pointer-events: none;
   z-index: 15;
 }
