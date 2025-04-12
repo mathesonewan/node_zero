@@ -58,6 +58,7 @@ function prompt() {
 
 // --- Run Command Handling ---
 
+
 function runCommand(input) {
   input = input.trim();
   const args = input.split(' ').filter(arg => arg.length > 0);
@@ -191,25 +192,60 @@ function runCommand(input) {
 // --- Capture User Input ---
 
 let commandBuffer = '';
+let commandHistory = [];
+let historyIndex = -1;
 
 term.onKey(e => {
   const { key, domEvent } = e;
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
-  if (domEvent.keyCode === 13) { // Enter
+  if (domEvent.key === 'Enter') {
+    if (commandBuffer.trim() !== '') {
+      commandHistory.push(commandBuffer);
+      historyIndex = commandHistory.length;
+    }
     term.write('\r\n');
-    runCommand(commandBuffer); // <<< RUN THE COMMAND
+    runCommand(commandBuffer);
     commandBuffer = '';
-  } else if (domEvent.keyCode === 8) { // Backspace
+  } 
+  
+  else if (domEvent.key === 'Backspace') {
     if (commandBuffer.length > 0) {
       commandBuffer = commandBuffer.slice(0, -1);
       term.write('\b \b');
     }
-  } else if (printable) {
+  } 
+  
+  else if (domEvent.key === 'ArrowUp') {
+    if (historyIndex > 0) {
+      historyIndex--;
+      // Clear current line
+      clearCurrentInput();
+      commandBuffer = commandHistory[historyIndex] || '';
+      term.write(commandBuffer);
+    }
+  } 
+  
+  else if (domEvent.key === 'ArrowDown') {
+    if (historyIndex < commandHistory.length - 1) {
+      historyIndex++;
+      // Clear current line
+      clearCurrentInput();
+      commandBuffer = commandHistory[historyIndex] || '';
+      term.write(commandBuffer);
+    } else {
+      historyIndex = commandHistory.length;
+      clearCurrentInput();
+      commandBuffer = '';
+    }
+  } 
+  
+  else if (printable) {
     commandBuffer += key;
     term.write(key);
   }
 });
+
 
 // --- Output Narrative on Startup ---
 
@@ -273,3 +309,10 @@ window.addEventListener('load', () => {
     notesArea.value = localStorage.getItem('hackerNotes') || '';
   }
 });
+
+function clearCurrentInput() {
+  // Move cursor back over current input and clear it visually
+  for (let i = 0; i < commandBuffer.length; i++) {
+    term.write('\b \b');
+  }
+}
