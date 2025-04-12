@@ -11,31 +11,36 @@ html, body {
 #layout {
   display: flex;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* --- Terminal --- */
 #terminal {
   flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0; /* Allows it to shrink properly */
   height: 100%;
   animation: flicker 8s infinite;
   position: relative;
   overflow: hidden;
 }
 
-/* --- Menu Wrapper --- */
+/* --- Menu Wrapper (Button + Panel) --- */
 #menuWrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
   background: rgba(0, 0, 0, 0.85);
   border-left: 2px solid #00FF00;
-  transform: translateX(100%); /* Initially hidden */
-  transition: transform 0.4s ease;
+  transition: width 0.4s ease, transform 0.4s ease;
+  width: 70px; /* Button width initially */
+  min-width: 70px;
 }
 
-/* --- Menu Open State --- */
+/* When menu opens */
 #menuWrapper.open {
-  transform: translateX(0);
+  width: 320px; /* Button + Panel width */
 }
 
 /* --- Menu Toggle Button --- */
@@ -52,6 +57,7 @@ html, body {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* --- Menu Panel --- */
@@ -60,6 +66,13 @@ html, body {
   width: 250px;
   display: flex;
   flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+}
+
+/* Slide panel into view when open */
+#menuWrapper.open #menuPanel {
+  transform: translateX(0);
 }
 
 /* --- Menu Textarea --- */
@@ -146,7 +159,6 @@ html, body {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
-
 #terminal .xterm-viewport::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
