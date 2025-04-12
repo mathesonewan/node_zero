@@ -1,17 +1,40 @@
-/* Make sure html and body take the full screen */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  background: #000; /* Terminal background color */
+  background: #000;
+  overflow: hidden; /* make sure nothing scrolls outside */
 }
 
-/* Terminal should stretch to cover the full screen */
 #terminal {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+/* --- Scanline effect --- */
+
+#scanline {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 255, 0, 0.2);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+  opacity: 0;
+  z-index: 10; /* Make sure it's on top */
+  pointer-events: none; /* Allow clicks/keyboard to pass through */
+  animation: scanline-move 4s linear infinite;
+}
+
+@keyframes scanline-move {
+  0% { top: -10%; opacity: 0; }
+  10% { opacity: 1; }
+  50% { top: 50%; opacity: 0.8; }
+  90% { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
 }
