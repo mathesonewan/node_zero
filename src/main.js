@@ -4,7 +4,7 @@ import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+es
 // Initialize terminal
 const term = new Terminal({
   theme: {
-    background: '#0A1F14',
+    background: '#001100', // Deep green CRT
     foreground: '#00FF00',
     cursor: '#00FF00'
   },
@@ -16,7 +16,7 @@ const term = new Terminal({
   disableStdin: false
 });
 
-// Add FitAddon to resize automatically
+// Add FitAddon
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
@@ -64,3 +64,32 @@ for (let i = 0; i < 30; i++) {
 }
 
 prompt();
+
+// --- Randomize Scanline Appearance + Movement ---
+
+const scanlineCurves = [
+  'ease-in-out',
+  'cubic-bezier(0.4, 0, 0.6, 1)',
+  'cubic-bezier(0.25, 0.1, 0.25, 1)',
+  'cubic-bezier(0.6, 0.05, 0.4, 0.95)',
+  'cubic-bezier(0.8, 0, 0.2, 1)',
+];
+
+function randomizeScanline() {
+  const scanline = document.getElementById('scanline');
+  if (!scanline) return;
+
+  // Randomly show or hide
+  scanline.style.opacity = Math.random() > 0.5 ? '1' : '0';
+
+  // Randomly pick a timing function
+  const randomCurve = scanlineCurves[Math.floor(Math.random() * scanlineCurves.length)];
+  scanline.style.animationTimingFunction = randomCurve;
+
+  // Random time until next toggle (3 to 7 seconds)
+  const nextToggle = Math.random() * 4000 + 3000;
+  setTimeout(randomizeScanline, nextToggle);
+}
+
+// Start randomizing scanline
+randomizeScanline();
