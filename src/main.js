@@ -391,27 +391,23 @@ outputIntro();
 // --- Notes Panel ---
 window.addEventListener('load', () => {
   const menuToggle = document.getElementById('menuToggle');
-const menuWrapper = document.getElementById('menuWrapper');
-const terminal = document.getElementById('terminal');
+  const menuWrapper = document.getElementById('menuWrapper');
 
-if (menuToggle && menuWrapper && terminal) {
-  menuToggle.addEventListener('click', () => {
-    menuWrapper.classList.toggle('open');
-    if (menuWrapper.classList.contains('open')) {
-      terminal.style.flexGrow = '0'; // Shrink terminal when menu open
-    } else {
-      terminal.style.flexGrow = '1'; // Expand terminal when menu closed
-    }
-  });
-}
-
+  if (menuToggle && menuWrapper) {
+    menuToggle.addEventListener('click', () => {
+      menuWrapper.classList.toggle('open');
+      fitAddon.fit(); // Resize the terminal properly!
+    });
+  }
 
   const menuArea = document.getElementById('menuArea');
+  menuArea.addEventListener('input', () => {
+    localStorage.setItem('hackerNotes', menuArea.value);
+  });
+
   if (menuArea) {
-    menuArea.addEventListener('input', () => {
-      localStorage.setItem('hackerNotes', menuArea.value);
-    });
     menuArea.value = localStorage.getItem('hackerNotes') || '';
   }
 });
+
 
