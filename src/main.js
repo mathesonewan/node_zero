@@ -390,21 +390,21 @@ outputIntro();
 
 // --- Notes Panel ---
 window.addEventListener('load', () => {
-  const notesToggle = document.getElementById('notesToggle');
-  const notesWrapper = document.getElementById('notesWrapper');
+  const menuToggle = document.getElementById('menuToggle');
+  const menuWrapper = document.getElementById('menuWrapper');
 
-  if (notesToggle && notesWrapper) {
-    notesToggle.addEventListener('click', () => {
-      notesWrapper.classList.toggle('open');
+  if (menuToggle && menuWrapper) {
+    menuToggle.addEventListener('click', () => {
+      menuWrapper.classList.toggle('open');
     });
   }
 
-  const notesArea = document.getElementById('notesArea');
-  notesArea.addEventListener('input', () => {
-    localStorage.setItem('hackerNotes', notesArea.value);
+  const menuArea = document.getElementById('menuArea');
+  menuArea.addEventListener('input', () => {
+    localStorage.setItem('hackerNotes', menuArea.value);
   });
 
-  if (notesArea) {
-    notesArea.value = localStorage.getItem('hackerNotes') || '';
+  if (menuArea) {
+    menuArea.value = localStorage.getItem('hackerNotes') || '';
   }
 });
