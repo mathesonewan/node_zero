@@ -1,10 +1,10 @@
 import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';
-import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm'; // <- ADD FitAddon
+import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';
 
 // Initialize terminal
 const term = new Terminal({
   theme: {
-    background: '#000000',
+    background: '#0A1F14',
     foreground: '#00FF00',
     cursor: '#00FF00'
   },
@@ -16,32 +16,26 @@ const term = new Terminal({
   disableStdin: false
 });
 
-// ADD FitAddon
+// Add FitAddon to resize automatically
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
-// Open the terminal inside the #terminal div
 term.open(document.getElementById('terminal'));
-
-// Fit the terminal to container size
 fitAddon.fit();
-
-// Focus immediately
 term.focus();
 
-// Also refit the terminal if the window resizes
+// Re-fit on window resize
 window.addEventListener('resize', () => {
   fitAddon.fit();
 });
 
-// Simple command handling
+// Simple input handling
 let commandBuffer = '';
 
 function prompt() {
   term.write('user@HackSim:~$ ');
 }
 
-// Handle user input
 term.onKey(e => {
   const { key, domEvent } = e;
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
@@ -64,7 +58,7 @@ term.onKey(e => {
   }
 });
 
-// Fill some lines initially to test scrolling
+// Fill some lines initially
 for (let i = 0; i < 30; i++) {
   term.writeln(`Welcome line ${i + 1}`);
 }

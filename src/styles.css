@@ -1,40 +1,61 @@
+/* --- Base layout --- */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  background: #000;
-  overflow: hidden; /* make sure nothing scrolls outside */
+  background: #2b5e16; /* Dark green CRT background */
+  overflow: hidden;
 }
 
+/* --- Terminal styling --- */
 #terminal {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  animation: flicker 8s infinite; /* Slower flicker */
 }
 
 /* --- Scanline effect --- */
-
 #scanline {
   position: absolute;
   top: -10%;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 2px; /* Slightly thinner scanline */
   background: rgba(0, 255, 0, 0.2);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4); /* Glowing scanline */
   opacity: 0;
-  z-index: 10; /* Make sure it's on top */
-  pointer-events: none; /* Allow clicks/keyboard to pass through */
+  z-index: 10;
+  pointer-events: none;
   animation: scanline-move 4s linear infinite;
 }
 
-@keyframes scanline-move {
-  0% { top: -10%; opacity: 0; }
-  10% { opacity: 1; }
-  50% { top: 50%; opacity: 0.8; }
-  90% { opacity: 1; }
-  100% { top: 110%; opacity: 0; }
+/* --- Noise / Grain Overlay --- */
+#noise {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/noisy.png'); /* Heavier visible noise */
+  opacity: 0.08; /* Stronger CRT static */
+  pointer-events: none;
+  z-index: 15;
 }
+
+/* --- Flicker animation --- */
+@keyframes flicker {
+  0%, 49%, 51%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65; /* Stronger flicker dip */
+  }
+}
+
+/* --- Scanline move animation --- */
+@keyframes scanline-move {
+  0% { top:
