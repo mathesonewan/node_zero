@@ -6,7 +6,7 @@ import systems from './systems.js';
 
 // --- Globals ---
 let currentMachine = null;
-let pendingLogin = '10.10.99.1'; // SBC IP
+let pendingLogin = '10.10.10.99'; // SBC IP
 let pendingUsername = '';
 let awaitingUsername = false;
 let awaitingPassword = false;
