@@ -139,7 +139,7 @@ html, body {
 #notesWrapper {
   position: fixed;
   top: 0;
-  right: -300px; /* <<< Wider start offset */
+  right: -250px; /* <<< Wider start offset */
   width: 320px; /* <<< Wrapper is bigger now */
   height: 100%;
   display: flex;
@@ -194,4 +194,14 @@ html, body {
   border-left: 2px solid #00FF00;
   display: flex;
   flex-direction: column;
+}
+
+/* --- Hide xterm.js internal scrollbar --- */
+#terminal .xterm-viewport {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+#terminal .xterm-viewport::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
