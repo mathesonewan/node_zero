@@ -392,25 +392,19 @@ outputIntro();
 window.addEventListener('load', () => {
   const menuToggle = document.getElementById('menuToggle');
   const menuWrapper = document.getElementById('menuWrapper');
-  const terminal = document.getElementById('terminal');
 
-  if (menuToggle && menuWrapper && terminal) {
+  if (menuToggle && menuWrapper) {
     menuToggle.addEventListener('click', () => {
       menuWrapper.classList.toggle('open');
-      if (menuWrapper.classList.contains('open')) {
-        terminal.style.width = 'calc(100% - 320px)';
-      } else {
-        terminal.style.width = '100%';
-      }
     });
   }
-  
 
   const menuArea = document.getElementById('menuArea');
+  menuArea.addEventListener('input', () => {
+    localStorage.setItem('hackerNotes', menuArea.value);
+  });
+
   if (menuArea) {
     menuArea.value = localStorage.getItem('hackerNotes') || '';
-    menuArea.addEventListener('input', () => {
-      localStorage.setItem('hackerNotes', menuArea.value);
-    });
   }
 });
