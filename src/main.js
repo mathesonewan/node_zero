@@ -1,6 +1,8 @@
 import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';
 import narrative from './narrative.js';
+import filesystem from './filesystem.js';
+
 
 // --- Terminal Setup ---
 
@@ -31,65 +33,7 @@ window.addEventListener('resize', () => {
 
 // --- Fake Filesystem Setup ---
 
-const fileSystem = {
-  '/': {
-    type: 'dir',
-    contents: {
-      'bin': {
-        type: 'dir',
-        contents: {
-          'ls': { type: 'file', content: 'binary executable' },
-          'cat': { type: 'file', content: 'binary executable' },
-          'bash': { type: 'file', content: 'binary executable' },
-          'ifconfig': { type: 'file', content: 'binary executable' }
-        }
-      },
-      'etc': {
-        type: 'dir',
-        contents: {
-          'passwd': { type: 'file', content: 'root:x:0:0:root:/root:/bin/bash' },
-          'shadow': { type: 'file', content: 'root:$6$randomsalt$encryptedpassword' },
-          'hostname': { type: 'file', content: 'SBC-DEVICE-01' },
-          'resolv.conf': { type: 'file', content: 'nameserver 8.8.8.8' }
-        }
-      },
-      'var': {
-        type: 'dir',
-        contents: {
-          'log': {
-            type: 'dir',
-            contents: {
-              'syslog': { type: 'file', content: 'System booted successfully.' },
-              'auth.log': { type: 'file', content: 'Accepted password for user from 192.168.1.5' },
-              'boot.log': { type: 'file', content: 'Boot sequence complete.' }
-            }
-          }
-        }
-      },
-      'opt': {
-        type: 'dir',
-        contents: {
-          'readme.md': { type: 'file', content: 'This is a placeholder for optional software.' },
-          'backup.tar.gz': { type: 'file', content: 'Binary backup archive.' }
-        }
-      },
-      'home': {
-        type: 'dir',
-        contents: {
-          'user': {
-            type: 'dir',
-            contents: {
-              'notes.txt': { type: 'file', content: 'Network password might be stored in /etc/shadow.' },
-              'credentials.txt': { type: 'file', content: 'admin:SuperSecret123' },
-              'todo.txt': { type: 'file', content: '1. Patch server\n2. Update firewall rules\n3. Change admin password' }
-            }
-          }
-        }
-      }
-    }
-  }
-};
-
+const fileSystem = filesystem;
 
 let currentPath = [];
 
