@@ -391,14 +391,14 @@ outputIntro();
 // --- Notes Panel ---
 window.addEventListener('load', () => {
   const menuToggle = document.getElementById('menuToggle');
-  const menuWrapper = document.getElementById('menuWrapper');
+  const container = document.getElementById('container');
 
-  if (menuToggle && menuWrapper) {
+  if (menuToggle && container) {
     menuToggle.addEventListener('click', () => {
-      menuWrapper.classList.toggle('open');
+      container.classList.toggle('menu-open');
     });
   }
-
+  
   const menuArea = document.getElementById('menuArea');
   menuArea.addEventListener('input', () => {
     localStorage.setItem('hackerNotes', menuArea.value);

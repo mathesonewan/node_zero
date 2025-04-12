@@ -1,19 +1,25 @@
-/* Layout base */
-body {
+/* Base layout */
+html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
   background: #001100;
   overflow: hidden;
-  display: flex;
 }
 
-/* Terminal wrapper (flex child) */
+#container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* Terminal area */
 #terminalWrapper {
   flex-grow: 1;
-  transition: width 0.4s ease;
   height: 100%;
+  transition: width 0.4s ease;
   position: relative;
 }
 
@@ -23,45 +29,40 @@ body {
   animation: flicker 8s infinite;
 }
 
-/* MENU WRAPPER */
-#menuWrapper {
-  width: 320px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: rgba(0, 0, 0, 0.85);
-  border-left: 2px solid #00FF00;
-  transform: translateX(100%);
-  transition: transform 0.4s ease;
-  z-index: 100;
-}
-
-/* When menu opens */
-#menuWrapper.open {
-  transform: translateX(0);
-}
-
-/* MENU Toggle Button */
+/* MENU button */
 #menuToggle {
-  width: 100%;
-  height: 50px;
+  width: 50px;
+  height: 100%;
   background: transparent;
   color: #00FF00;
   font-family: 'Courier New', monospace;
-  font-size: 16px;
+  font-size: 14px;
   border: none;
-  border-bottom: 2px solid #00FF00;
-  text-align: left;
-  padding-left: 10px;
+  border-left: 2px solid #00FF00;
   cursor: pointer;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
 }
 
 /* MENU Panel */
 #menuPanel {
-  flex-grow: 1;
-  width: 100%;
+  width: 320px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  border-left: 2px solid #00FF00;
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
   display: flex;
   flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 200;
+}
+
+/* Slide menu in */
+#container.menu-open #menuPanel {
+  transform: translateX(0);
 }
 
 /* Menu Textarea */
@@ -78,7 +79,7 @@ body {
   outline: none;
 }
 
-/* --- Hide xterm.js internal scrollbar --- */
+/* Hide xterm.js scrollbar */
 #terminal .xterm-viewport {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -87,107 +88,4 @@ body {
   display: none;
 }
 
-/* --- CRT Effects --- */
-/* --- Flicker animation --- */
-@keyframes flicker {
-  0%, 49%, 51%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.65;
-  }
-}
-
-/* --- Scanline Effect --- */
-#scanline {
-  position: absolute;
-  top: -10%;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: rgba(0, 255, 0, 0.08);
-  box-shadow: 0 0 25px 10px rgba(0, 255, 0, 0.15);
-  backdrop-filter: blur(1px);
-  opacity: 0;
-  z-index: 10;
-  pointer-events: none;
-  animation: scanline-move 8s linear infinite;
-}
-
-/* --- Scanline Move Animation --- */
-@keyframes scanline-move {
-  0% { top: -10%; opacity: 0; }
-  10% { opacity: 1; }
-  50% { top: 50%; opacity: 0.8; }
-  90% { opacity: 1; }
-  100% { top: 110%; opacity: 0; }
-}
-
-/* --- Static Noise Layer 1 (Still) --- */
-#noise {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('https://www.transparenttextures.com/patterns/noisy.png');
-  opacity: 0.2;
-  pointer-events: none;
-  z-index: 15;
-}
-
-/* --- Static Noise Layer 2 (Moving) --- */
-#noise2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('https://www.transparenttextures.com/patterns/noisy.png');
-  opacity: 0.05;
-  pointer-events: none;
-  z-index: 16;
-  animation: noiseMove 5s infinite linear;
-}
-
-/* --- Noise Movement Animation --- */
-@keyframes noiseMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 10px 10px; }
-}
-
-/* --- CRT Burn-in Ghost Layer --- */
-#burnin {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: none;
-  opacity: 0.03; /* Super subtle */
-  pointer-events: none;
-  z-index: 12; /* Between scanline and noise */
-}
-
-/* --- Distortion Effects (Shake, Magnetic, Ghost) --- */
-.distort {
-  transform: scaleX(1.02) skewX(1.5deg);
-  transition: transform 0.2s ease;
-}
-
-.magnetic {
-  transform: scaleX(1.05) skewX(3deg);
-  transition: transform 0.3s ease-in-out;
-}
-
-.shake {
-  animation: shake 0.5s;
-}
-
-@keyframes shake {
-  0% { transform: translateX(1px); }
-  25% { transform: translateX(-1px); }
-  50% { transform: translateX(1px); }
-  75% { transform: translateX(-1px); }
-  100% { transform: translateX(0); }
-}
+/* CRT Effects: flicker, noise, scanline (paste your effects back here) */
