@@ -2,10 +2,11 @@ import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';
 import narrative from './narrative.js';
 
-// Initialize terminal
+// --- Terminal Setup ---
+
 const term = new Terminal({
   theme: {
-    background: '#001100', // Deep green CRT
+    background: '#001100',
     foreground: '#00FF00',
     cursor: '#00FF00'
   },
@@ -17,7 +18,6 @@ const term = new Terminal({
   disableStdin: false
 });
 
-// Add FitAddon
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
@@ -25,85 +25,163 @@ term.open(document.getElementById('terminal'));
 fitAddon.fit();
 term.focus();
 
-// Re-fit on window resize
 window.addEventListener('resize', () => {
   fitAddon.fit();
 });
 
-// Simple input handling
-let commandBuffer = '';
-let overloadCounter = 0;
-let overloadTimeout;
+// --- Fake Filesystem Setup ---
 
-function prompt() {
-  term.write('user@HackSim:~$ ');
+const fileSystem = {
+  '/': {
+    type: 'dir',
+    contents: {
+      'bin': { type: 'dir', contents: {} },
+      'etc': { type: 'dir', contents: {} },
+      'home': {
+        type: 'dir',
+        contents: {
+          'user': {
+            type: 'dir',
+            contents: {
+              'notes.txt': { type: 'file', content: 'Network password might be stored in /etc/shadow.' },
+              'credentials.txt': { type: 'file', content: 'admin:SuperSecret123' }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+let currentPath = [];
+
+function getCurrentDir() {
+  let dir = fileSystem['/'];
+  for (const part of currentPath) {
+    if (dir.type !== 'dir' || !dir.contents[part]) {
+      return null;
+    }
+    dir = dir.contents[part];
+  }
+  return dir;
 }
 
-// --- Main Keyboard Handler (single clean handler!) ---
+// --- Prompt Handling ---
+
+function prompt() {
+  term.write(`\r\nuser@SBC_1:/${currentPath.join('/')}$ `);
+}
+
+// --- Run Command Handling ---
+
+function runCommand(input) {
+  input = input.trim();
+  const args = input.split(' ').filter(arg => arg.length > 0);
+  const command = args[0];
+
+  if (!command) {
+    prompt();
+    return;
+  }
+
+  const dir = getCurrentDir();
+
+  if (!dir) {
+    term.writeln('Filesystem error: invalid path');
+    prompt();
+    return;
+  }
+
+  if (command === 'ls') {
+    if (dir.type === 'dir') {
+      term.writeln(Object.keys(dir.contents).join('    '));
+    } else {
+      term.writeln('Not a directory.');
+    }
+  }
+
+  else if (command === 'cd') {
+    if (args.length < 2) {
+      term.writeln('Usage: cd <directory>');
+    } else if (args[1] === '..') {
+      if (currentPath.length > 0) currentPath.pop();
+    } else if (dir.contents[args[1]] && dir.contents[args[1]].type === 'dir') {
+      currentPath.push(args[1]);
+    } else {
+      term.writeln('No such directory: ' + args[1]);
+    }
+  }
+
+  else if (command === 'cat') {
+    if (args.length < 2) {
+      term.writeln('Usage: cat <file>');
+    } else if (dir.contents[args[1]] && dir.contents[args[1]].type === 'file') {
+      term.writeln(dir.contents[args[1]].content);
+    } else {
+      term.writeln('No such file: ' + args[1]);
+    }
+  }
+
+  else if (command === 'clear') {
+    term.clear();
+    prompt();
+    return;
+  }
+
+  else {
+    term.writeln(`Command not found: ${command}`);
+  }
+
+  prompt();
+}
+
+// --- Capture User Input ---
+
+let commandBuffer = '';
+
 term.onKey(e => {
   const { key, domEvent } = e;
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
   if (domEvent.keyCode === 13) { // Enter
     term.write('\r\n');
-    if (commandBuffer.trim() !== '') {
-      term.writeln(`You typed: ${commandBuffer}`);
-    }
+    runCommand(commandBuffer); // <<< RUN THE COMMAND
     commandBuffer = '';
-    prompt();
   } else if (domEvent.keyCode === 8) { // Backspace
     if (commandBuffer.length > 0) {
       commandBuffer = commandBuffer.slice(0, -1);
       term.write('\b \b');
     }
-  } else if (printable) { // Normal characters
+  } else if (printable) {
     commandBuffer += key;
     term.write(key);
-
-    // --- Typing Overload Detection ---
-    overloadCounter++;
-
-    if (overloadCounter > 15) { // Too many keypresses rapidly
-      triggerOverloadDistortion();
-      overloadCounter = 0;
-    }
-
-    clearTimeout(overloadTimeout);
-    overloadTimeout = setTimeout(() => {
-      overloadCounter = 0;
-    }, 1000); // Reset counter after 1 second
   }
 });
 
-// Output narrative intro slowly, then prompt
+// --- Output Narrative on Startup ---
 
 async function outputIntro() {
-  // --- 1.5s pause before starting ---
-  await delay(1500);
+  await delay(1500); // Startup pause
 
   for (const line of narrative.intro) {
     await typeLine(line);
-    await delay(300); // Slightly longer pause between lines
+    await delay(300);
   }
 
-  prompt(); // Show prompt after intro
+  prompt();
 }
 
-// Typing each character slowly
 async function typeLine(line) {
   for (const char of line) {
     term.write(char);
-    await delay(20); // Delay between each character (30ms per character)
-
-    // --- Random tiny flicker ---
-    if (Math.random() < 0.03) { // 3% chance
+    await delay(20); // Faster typing speed (your custom setting!)
+    if (Math.random() < 0.03) {
       tinyFlicker();
     }
   }
-  term.write('\r\n'); // Move to next line after full line typed
+  term.write('\r\n');
 }
 
-// Tiny flicker effect
 function tinyFlicker() {
   const terminal = document.getElementById('terminal');
   if (!terminal) return;
@@ -114,155 +192,15 @@ function tinyFlicker() {
   }, 50);
 }
 
-// Delay helper
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Start the intro
+// Start intro sequence
 outputIntro();
 
+// --- Notes Panel Toggle (Button and Panel Slide Together) ---
 
-
-// --- Randomize Scanline Appearance + Movement ---
-
-const scanlineCurves = [
-  'ease-in-out',
-  'cubic-bezier(0.4, 0, 0.6, 1)',
-  'cubic-bezier(0.25, 0.1, 0.25, 1)',
-  'cubic-bezier(0.6, 0.05, 0.4, 0.95)',
-  'cubic-bezier(0.8, 0, 0.2, 1)',
-];
-
-function randomizeScanline() {
-  const scanline = document.getElementById('scanline');
-  if (!scanline) return;
-
-  // Randomly show or hide
-  scanline.style.opacity = Math.random() > 0.5 ? '1' : '0';
-
-  // Randomly pick a timing function
-  const randomCurve = scanlineCurves[Math.floor(Math.random() * scanlineCurves.length)];
-  scanline.style.animationTimingFunction = randomCurve;
-
-  // Random time until next toggle (7–15 seconds)
-  const nextToggle = Math.random() * 8000 + 7000;
-  setTimeout(randomizeScanline, nextToggle);
-}
-
-randomizeScanline();
-
-// --- Random Voltage Distortion ---
-
-function randomDistortion() {
-  const terminal = document.getElementById('terminal');
-  if (!terminal) return;
-
-  terminal.classList.add('distort');
-
-  setTimeout(() => {
-    terminal.classList.remove('distort');
-  }, 300);
-
-  const nextDistort = Math.random() * 15000 + 10000; // 10-25 seconds
-  setTimeout(randomDistortion, nextDistort);
-}
-
-randomDistortion();
-
-// --- Random Magnetic Pull Distortion ---
-
-function randomMagnetic() {
-  const terminal = document.getElementById('terminal');
-  if (!terminal) return;
-
-  terminal.classList.add('magnetic');
-
-  setTimeout(() => {
-    terminal.classList.remove('magnetic');
-  }, 400);
-
-  const nextMagnetic = Math.random() * 30000 + 20000; // 20-50 seconds
-  setTimeout(randomMagnetic, nextMagnetic);
-}
-
-randomMagnetic();
-
-// --- Random Screen Shake ---
-
-function randomShake() {
-  const terminal = document.getElementById('terminal');
-  if (!terminal) return;
-
-  terminal.classList.add('shake');
-
-  setTimeout(() => {
-    terminal.classList.remove('shake');
-  }, 500);
-
-  const nextShake = Math.random() * 30000 + 15000; // 15-45 seconds
-  setTimeout(randomShake, nextShake);
-}
-
-randomShake();
-
-// --- Overload Distortion (called from typing handler) ---
-
-function triggerOverloadDistortion() {
-  const terminal = document.getElementById('terminal');
-  if (!terminal) return;
-
-  terminal.classList.add('magnetic');
-  terminal.classList.add('shake');
-
-  setTimeout(() => {
-    terminal.classList.remove('magnetic');
-    terminal.classList.remove('shake');
-  }, 500);
-}
-
-// --- CRT Burn-In Ghosting ---
-
-function updateBurnIn() {
-  const terminal = document.getElementById('terminal');
-  const burnin = document.getElementById('burnin');
-  if (!terminal || !burnin) return;
-
-  // Capture a "snapshot" of the current terminal state
-  burnin.style.backgroundImage = `url(${captureTerminal()})`;
-  burnin.style.backgroundSize = 'cover';
-
-  // Update again every 20–40 seconds
-  const nextUpdate = Math.random() * 20000 + 20000;
-  setTimeout(updateBurnIn, nextUpdate);
-}
-
-function captureTerminal() {
-  try {
-    const canvas = document.createElement('canvas');
-    const terminalEl = document.getElementById('terminal');
-    const rect = terminalEl.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = '#001100';
-    ctx.fillRect(0, 0, rect.width, rect.height);
-
-    // NOTE: We simulate the capture, real xterm content isn't directly accessible without more tricks.
-    // This is a hack to just refresh a subtle ghosty background instead of the real text.
-
-    return canvas.toDataURL('image/png');
-  } catch (e) {
-    console.error('Burn-in capture failed:', e);
-    return '';
-  }
-}
-
-// Start burn-in updates
-updateBurnIn();
-
-// --- Hacker Notes Panel ---
 window.addEventListener('load', () => {
   const notesToggle = document.getElementById('notesToggle');
   const notesWrapper = document.getElementById('notesWrapper');
