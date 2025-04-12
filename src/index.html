@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HackSim Web Terminal</title>
 
-  <!-- Link to external CSS file -->
+  <!-- xterm.js default styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+
+  <!-- Our minimal custom styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="terminal"></div>
-  <div id="scanline"></div>
 
-  <!-- Link to external JS file -->
+  <!-- xterm.js and our code -->
   <script type="module" src="main.js"></script>
 </body>
 </html>
