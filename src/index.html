@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HackSim Web Terminal</title>
 
-  <!-- xterm.js styles -->
+  <!-- xterm.js default styles -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
-  <!-- Custom styles -->
+
+  <!-- Our custom styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="container">
-    <div id="terminalWrapper">
-      <div id="terminal"></div>
-    </div>
+  <div id="layout">
+    <div id="terminal"></div>
 
-    <button id="menuToggle">MENU</button>
-
-    <div id="menuPanel">
-      <textarea id="menuArea" placeholder="Start typing your notes here..."></textarea>
+    <div id="menuWrapper">
+      <button id="menuToggle">Menu</button>
+      <div id="menuPanel">
+        <textarea id="menuArea" placeholder="Start typing your notes here..."></textarea>
+      </div>
     </div>
   </div>
 
@@ -28,6 +28,6 @@
   <div id="noise"></div>
   <div id="noise2"></div>
 
-  <script type="module" src="main.js"></script>
+  <script type="module" src="main.js"></script> 
 </body>
 </html>

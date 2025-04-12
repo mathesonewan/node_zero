@@ -391,20 +391,26 @@ outputIntro();
 // --- Notes Panel ---
 window.addEventListener('load', () => {
   const menuToggle = document.getElementById('menuToggle');
-  const container = document.getElementById('container');
+  const menuWrapper = document.getElementById('menuWrapper');
+  const terminal = document.getElementById('terminal');
 
-  if (menuToggle && container) {
+  if (menuToggle && menuWrapper) {
     menuToggle.addEventListener('click', () => {
-      container.classList.toggle('menu-open');
+      menuWrapper.classList.toggle('open');
+      if (menuWrapper.classList.contains('open')) {
+        terminal.style.flexGrow = '0';
+      } else {
+        terminal.style.flexGrow = '1';
+      }
     });
   }
-  
-  const menuArea = document.getElementById('menuArea');
-  menuArea.addEventListener('input', () => {
-    localStorage.setItem('hackerNotes', menuArea.value);
-  });
 
+  const menuArea = document.getElementById('menuArea');
   if (menuArea) {
+    menuArea.addEventListener('input', () => {
+      localStorage.setItem('hackerNotes', menuArea.value);
+    });
     menuArea.value = localStorage.getItem('hackerNotes') || '';
   }
 });
+

@@ -1,4 +1,4 @@
-/* Base layout */
+/* --- Base layout --- */
 html, body {
   margin: 0;
   padding: 0;
@@ -8,64 +8,61 @@ html, body {
   overflow: hidden;
 }
 
-#container {
+#layout {
   display: flex;
   height: 100%;
-  width: 100%;
-  position: relative;
 }
 
-/* Terminal area */
-#terminalWrapper {
+/* --- Terminal --- */
+#terminal {
   flex-grow: 1;
   height: 100%;
-  transition: width 0.4s ease;
-  position: relative;
-}
-
-#terminal {
-  width: 100%;
-  height: 100%;
   animation: flicker 8s infinite;
+  position: relative;
+  overflow: hidden;
 }
 
-/* MENU button */
-#menuToggle {
-  width: 50px;
+/* --- Menu Wrapper --- */
+#menuWrapper {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  border-left: 2px solid #00FF00;
+  transform: translateX(100%); /* Initially hidden */
+  transition: transform 0.4s ease;
+}
+
+/* --- Menu Open State --- */
+#menuWrapper.open {
+  transform: translateX(0);
+}
+
+/* --- Menu Toggle Button --- */
+#menuToggle {
+  width: 70px;
+  height: 100px;
   background: transparent;
   color: #00FF00;
   font-family: 'Courier New', monospace;
   font-size: 14px;
-  border: none;
-  border-left: 2px solid #00FF00;
-  cursor: pointer;
+  border: 2px solid #00FF00;
+  border-left: none;
+  text-align: center;
   writing-mode: vertical-rl;
-  text-orientation: mixed;
+  transform: rotate(180deg);
+  cursor: pointer;
 }
 
-/* MENU Panel */
+/* --- Menu Panel --- */
 #menuPanel {
-  width: 320px;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  border-left: 2px solid #00FF00;
-  transform: translateX(100%);
-  transition: transform 0.4s ease;
+  flex-grow: 1;
+  width: 250px;
   display: flex;
   flex-direction: column;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 200;
 }
 
-/* Slide menu in */
-#container.menu-open #menuPanel {
-  transform: translateX(0);
-}
-
-/* Menu Textarea */
+/* --- Menu Textarea --- */
 #menuArea {
   flex-grow: 1;
   width: 100%;
@@ -79,13 +76,77 @@ html, body {
   outline: none;
 }
 
-/* Hide xterm.js scrollbar */
-#terminal .xterm-viewport {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-#terminal .xterm-viewport::-webkit-scrollbar {
-  display: none;
+/* --- Scanline --- */
+#scanline {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 255, 0, 0.08);
+  box-shadow: 0 0 25px 10px rgba(0, 255, 0, 0.15);
+  backdrop-filter: blur(1px);
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+  animation: scanline-move 8s linear infinite;
 }
 
-/* CRT Effects: flicker, noise, scanline (paste your effects back here) */
+/* --- Burn-in Layer --- */
+#burnin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: none;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 12;
+}
+
+/* --- Noise Layers --- */
+#noise, #noise2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/noisy.png');
+  pointer-events: none;
+  z-index: 15;
+}
+#noise {
+  opacity: 0.2;
+}
+#noise2 {
+  opacity: 0.05;
+  animation: noiseMove 5s infinite linear;
+}
+
+/* --- Keyframes --- */
+@keyframes flicker {
+  0%, 49%, 51%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+@keyframes scanline-move {
+  0% { top: -10%; opacity: 0; }
+  10% { opacity: 1; }
+  50% { top: 50%; opacity: 0.8; }
+  90% { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
+}
+@keyframes noiseMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 10px 10px; }
+}
+
+/* --- Hide xterm.js internal scrollbar --- */
+#terminal .xterm-viewport {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+#terminal .xterm-viewport::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
