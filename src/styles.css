@@ -29,6 +29,7 @@ html, body {
 #menuWrapper {
   width: 320px;
   height: 100%;
+  width: 0px; /* <<< Start collapsed */
   display: flex;
   flex-direction: column;
   background: none; /* No background on the wrapper */

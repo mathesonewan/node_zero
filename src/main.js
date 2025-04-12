@@ -398,14 +398,13 @@ window.addEventListener('load', () => {
     menuToggle.addEventListener('click', () => {
       menuWrapper.classList.toggle('open');
       if (menuWrapper.classList.contains('open')) {
-        terminal.style.flexGrow = '0';
         terminal.style.width = 'calc(100% - 320px)';
       } else {
-        terminal.style.flexGrow = '1';
         terminal.style.width = '100%';
       }
     });
   }
+  
 
   const menuArea = document.getElementById('menuArea');
   if (menuArea) {
