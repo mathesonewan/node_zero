@@ -3,6 +3,7 @@ import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+es
 import narrative from './narrative.js';
 import filesystem from './filesystem.js';
 import systems from './systems.js'; // <- Add this import at top of main.js
+let currentMachine = null;  // Not connected at start
 
 
 
@@ -50,6 +51,16 @@ function getCurrentDir() {
   return dir;
 }
 
+function getDirFromPath(base, pathArray) {
+  let current = base;
+  for (const part of pathArray) {
+    if (!current.contents || !current.contents[part]) return null;
+    current = current.contents[part];
+  }
+  return current;
+}
+
+
 // --- Prompt Handling ---
 
 function prompt() {
@@ -77,13 +88,32 @@ function runCommand(input) {
     return;
   }
 
-  if (command === 'ls') {
-    if (dir.type === 'dir') {
-      term.writeln(Object.keys(dir.contents).join('    '));
+  else if (command === 'ls') {
+    const effectiveDir = getCurrentDir();
+  
+    if (currentMachine) {
+      // You are inside a machine, start from that machine's node
+      if (!currentPath.length) {
+        term.writeln('Available folders:');
+      }
+      const machineNode = fileSystem['/']['contents'][currentMachine];
+      const pathNode = getDirFromPath(machineNode, currentPath);
+      if (pathNode && pathNode.type === 'dir') {
+        term.writeln(Object.keys(pathNode.contents).join('    '));
+      } else {
+        term.writeln('Not a directory.');
+      }
     } else {
-      term.writeln('Not a directory.');
+      // You are outside, show IP addresses
+      if (effectiveDir.type === 'dir') {
+        term.writeln('Available Hosts:');
+        term.writeln(Object.keys(effectiveDir.contents).join('    '));
+      } else {
+        term.writeln('Not a directory.');
+      }
     }
   }
+  
 
   else if (command === 'nmap') {
     if (args.length < 2) {
