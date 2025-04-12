@@ -1,5 +1,6 @@
 import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';
+import narrative from './narrative.js';
 
 // Initialize terminal
 const term = new Terminal({
@@ -74,12 +75,24 @@ term.onKey(e => {
   }
 });
 
-// Fill some lines initially
-for (let i = 0; i < 30; i++) {
-  term.writeln(`Welcome line ${i + 1}`);
+// Output narrative intro slowly, then prompt
+
+async function outputIntro() {
+  for (const line of narrative.intro) {
+    term.writeln(line);
+    await delay(200); // short delay between lines
+  }
+  prompt(); // Show prompt after intro
 }
 
-prompt();
+// Helper delay function
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Start the intro
+outputIntro();
+
 
 // --- Randomize Scanline Appearance + Movement ---
 
