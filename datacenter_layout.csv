@@ -1,0 +1,186 @@
+machine_ip,hostname,username,password,path,type,content
+10.10.10.2,server01.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.2,server01.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.3,server02.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.3,server02.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.4,server03.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.4,server03.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.5,server04.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.5,server04.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.6,server05.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.6,server05.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.7,server06.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.7,server06.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.8,server07.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.8,server07.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.9,server08.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.9,server08.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.10,server09.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.10,server09.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.11,server10.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.11,server10.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.12,server11.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.12,server11.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.13,server12.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.13,server12.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.14,server13.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.14,server13.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.15,server14.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.15,server14.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.16,server15.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.16,server15.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.17,server16.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.17,server16.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.18,server17.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.18,server17.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.19,server18.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.19,server18.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.20,server19.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.20,server19.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.10.21,server20.local,admin,serverpass,/etc/passwd,file,root:x:0:0:root:/root:/bin/bash
+10.10.10.21,server20.local,admin,serverpass,/home/admin/notes.txt,file,Confidential project files.
+10.10.20.11,workstation01.local,user01,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.11,workstation01.local,user01,workpass,/etc/hostname,file,workstation01.local
+10.10.20.12,workstation02.local,user02,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.12,workstation02.local,user02,workpass,/etc/hostname,file,workstation02.local
+10.10.20.13,workstation03.local,user03,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.13,workstation03.local,user03,workpass,/etc/hostname,file,workstation03.local
+10.10.20.14,workstation04.local,user04,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.14,workstation04.local,user04,workpass,/etc/hostname,file,workstation04.local
+10.10.20.15,workstation05.local,user05,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.15,workstation05.local,user05,workpass,/etc/hostname,file,workstation05.local
+10.10.20.16,workstation06.local,user06,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.16,workstation06.local,user06,workpass,/etc/hostname,file,workstation06.local
+10.10.20.17,workstation07.local,user07,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.17,workstation07.local,user07,workpass,/etc/hostname,file,workstation07.local
+10.10.20.18,workstation08.local,user08,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.18,workstation08.local,user08,workpass,/etc/hostname,file,workstation08.local
+10.10.20.19,workstation09.local,user09,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.19,workstation09.local,user09,workpass,/etc/hostname,file,workstation09.local
+10.10.20.20,workstation10.local,user10,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.20,workstation10.local,user10,workpass,/etc/hostname,file,workstation10.local
+10.10.20.21,workstation11.local,user11,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.21,workstation11.local,user11,workpass,/etc/hostname,file,workstation11.local
+10.10.20.22,workstation12.local,user12,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.22,workstation12.local,user12,workpass,/etc/hostname,file,workstation12.local
+10.10.20.23,workstation13.local,user13,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.23,workstation13.local,user13,workpass,/etc/hostname,file,workstation13.local
+10.10.20.24,workstation14.local,user14,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.24,workstation14.local,user14,workpass,/etc/hostname,file,workstation14.local
+10.10.20.25,workstation15.local,user15,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.25,workstation15.local,user15,workpass,/etc/hostname,file,workstation15.local
+10.10.20.26,workstation16.local,user16,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.26,workstation16.local,user16,workpass,/etc/hostname,file,workstation16.local
+10.10.20.27,workstation17.local,user17,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.27,workstation17.local,user17,workpass,/etc/hostname,file,workstation17.local
+10.10.20.28,workstation18.local,user18,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.28,workstation18.local,user18,workpass,/etc/hostname,file,workstation18.local
+10.10.20.29,workstation19.local,user19,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.29,workstation19.local,user19,workpass,/etc/hostname,file,workstation19.local
+10.10.20.30,workstation20.local,user20,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.30,workstation20.local,user20,workpass,/etc/hostname,file,workstation20.local
+10.10.20.31,workstation21.local,user21,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.31,workstation21.local,user21,workpass,/etc/hostname,file,workstation21.local
+10.10.20.32,workstation22.local,user22,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.32,workstation22.local,user22,workpass,/etc/hostname,file,workstation22.local
+10.10.20.33,workstation23.local,user23,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.33,workstation23.local,user23,workpass,/etc/hostname,file,workstation23.local
+10.10.20.34,workstation24.local,user24,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.34,workstation24.local,user24,workpass,/etc/hostname,file,workstation24.local
+10.10.20.35,workstation25.local,user25,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.35,workstation25.local,user25,workpass,/etc/hostname,file,workstation25.local
+10.10.20.36,workstation26.local,user26,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.36,workstation26.local,user26,workpass,/etc/hostname,file,workstation26.local
+10.10.20.37,workstation27.local,user27,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.37,workstation27.local,user27,workpass,/etc/hostname,file,workstation27.local
+10.10.20.38,workstation28.local,user28,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.38,workstation28.local,user28,workpass,/etc/hostname,file,workstation28.local
+10.10.20.39,workstation29.local,user29,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.39,workstation29.local,user29,workpass,/etc/hostname,file,workstation29.local
+10.10.20.40,workstation30.local,user30,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.40,workstation30.local,user30,workpass,/etc/hostname,file,workstation30.local
+10.10.20.41,workstation31.local,user31,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.41,workstation31.local,user31,workpass,/etc/hostname,file,workstation31.local
+10.10.20.42,workstation32.local,user32,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.42,workstation32.local,user32,workpass,/etc/hostname,file,workstation32.local
+10.10.20.43,workstation33.local,user33,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.43,workstation33.local,user33,workpass,/etc/hostname,file,workstation33.local
+10.10.20.44,workstation34.local,user34,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.44,workstation34.local,user34,workpass,/etc/hostname,file,workstation34.local
+10.10.20.45,workstation35.local,user35,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.45,workstation35.local,user35,workpass,/etc/hostname,file,workstation35.local
+10.10.20.46,workstation36.local,user36,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.46,workstation36.local,user36,workpass,/etc/hostname,file,workstation36.local
+10.10.20.47,workstation37.local,user37,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.47,workstation37.local,user37,workpass,/etc/hostname,file,workstation37.local
+10.10.20.48,workstation38.local,user38,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.48,workstation38.local,user38,workpass,/etc/hostname,file,workstation38.local
+10.10.20.49,workstation39.local,user39,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.49,workstation39.local,user39,workpass,/etc/hostname,file,workstation39.local
+10.10.20.50,workstation40.local,user40,workpass,/home/user/docs/notes.txt,file,Don't forget to submit reports!
+10.10.20.50,workstation40.local,user40,workpass,/etc/hostname,file,workstation40.local
+10.10.30.21,printer01.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.22,printer02.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.23,printer03.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.24,printer04.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.25,printer05.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.26,printer06.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.27,printer07.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.28,printer08.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.29,printer09.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.30.30,printer10.local,admin,printerpass,/etc/printer.conf,file,Printer configuration settings.
+10.10.40.31,camera01.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.32,camera02.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.33,camera03.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.34,camera04.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.35,camera05.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.36,camera06.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.37,camera07.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.38,camera08.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.39,camera09.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.40,camera10.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.41,camera11.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.42,camera12.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.43,camera13.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.44,camera14.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.40.45,camera15.local,admin,camerapass,/etc/camera.conf,file,Camera settings and streaming keys.
+10.10.50.41,router01.local,netadmin,netpass,/etc/router.conf,file,Router settings and routing tables.
+10.10.50.42,router02.local,netadmin,netpass,/etc/router.conf,file,Router settings and routing tables.
+10.10.50.43,router03.local,netadmin,netpass,/etc/router.conf,file,Router settings and routing tables.
+10.10.50.44,router04.local,netadmin,netpass,/etc/router.conf,file,Router settings and routing tables.
+10.10.50.45,router05.local,netadmin,netpass,/etc/router.conf,file,Router settings and routing tables.
+10.10.10.99,sbc01.local,root,toor,/home/user/tools/scanner.sh,file,"#!/bin/bash
+nmap -sn 10.10.0.0/16"
+10.10.10.99,sbc01.local,root,toor,/home/user/passwordlist.txt,file,"admin
+password
+123456
+letmein"
+10.10.10.99,sbc01.local,root,toor,/etc/hostname,file,sbc01.local
+10.10.20.99,sbc02.local,root,toor,/home/user/tools/scanner.sh,file,"#!/bin/bash
+nmap -sn 10.10.0.0/16"
+10.10.20.99,sbc02.local,root,toor,/home/user/passwordlist.txt,file,"admin
+password
+123456
+letmein"
+10.10.20.99,sbc02.local,root,toor,/etc/hostname,file,sbc02.local
+10.10.30.99,sbc03.local,root,toor,/home/user/tools/scanner.sh,file,"#!/bin/bash
+nmap -sn 10.10.0.0/16"
+10.10.30.99,sbc03.local,root,toor,/home/user/passwordlist.txt,file,"admin
+password
+123456
+letmein"
+10.10.30.99,sbc03.local,root,toor,/etc/hostname,file,sbc03.local
+10.10.40.99,sbc04.local,root,toor,/home/user/tools/scanner.sh,file,"#!/bin/bash
+nmap -sn 10.10.0.0/16"
+10.10.40.99,sbc04.local,root,toor,/home/user/passwordlist.txt,file,"admin
+password
+123456
+letmein"
+10.10.40.99,sbc04.local,root,toor,/etc/hostname,file,sbc04.local
+10.10.50.99,sbc05.local,root,toor,/home/user/tools/scanner.sh,file,"#!/bin/bash
+nmap -sn 10.10.0.0/16"
+10.10.50.99,sbc05.local,root,toor,/home/user/passwordlist.txt,file,"admin
+password
+123456
+letmein"
+10.10.50.99,sbc05.local,root,toor,/etc/hostname,file,sbc05.local

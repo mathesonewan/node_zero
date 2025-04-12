@@ -2,6 +2,8 @@ import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';
 import narrative from './narrative.js';
 import filesystem from './filesystem.js';
+import systems from './systems.js'; // <- Add this import at top of main.js
+
 
 
 // --- Terminal Setup ---
@@ -80,6 +82,43 @@ function runCommand(input) {
     } else {
       term.writeln('Not a directory.');
     }
+  }
+
+  else if (command === 'nmap') {
+    if (args.length < 2) {
+      term.writeln('Usage: nmap <subnet>');
+    } else {
+      const subnet = args[1].split('/')[0].split('.').slice(0, 3).join('.') + '.';
+      term.writeln(`Starting Nmap scan on ${subnet}0/24`);
+      let found = false;
+      systems.forEach(system => {
+        if (system.ip.startsWith(subnet)) {
+          term.writeln(`Host ${system.ip} (${system.hostname}) is up`);
+          found = true;
+        }
+      });
+      if (!found) {
+        term.writeln('No hosts found.');
+      }
+    }
+    prompt();
+    return;
+  }
+  
+  else if (command === 'ping') {
+    if (args.length < 2) {
+      term.writeln('Usage: ping <ip>');
+    } else {
+      const targetIp = args[1];
+      const target = systems.find(system => system.ip === targetIp);
+      if (target) {
+        term.writeln(`Pinging ${targetIp} (${target.hostname})... Success!`);
+      } else {
+        term.writeln(`Pinging ${targetIp}... No response.`);
+      }
+    }
+    prompt();
+    return;
   }
 
   else if (command === 'cd') {
