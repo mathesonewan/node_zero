@@ -95,8 +95,41 @@ html, body {
   }
 }
 
-/* --- Distortion effect --- */
+/* --- Distortion effect (Overload) --- */
 .distort {
-  transform: scale(1.02) skewX(1deg) skewY(0.5deg);
+  transform: scaleX(1.02) skewX(1.5deg); /* Only horizontal scaling and skewing */
   transition: transform 0.2s ease;
+}
+
+/* --- Magnetic distortion effect (Random Magnetic Pull) --- */
+.magnetic {
+  transform: scaleX(1.05) skewX(3deg); /* Only horizontal distortions */
+  transition: transform 0.3s ease-in-out;
+}
+
+/* --- Screen shake effect --- */
+.shake {
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(1px); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  75% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
+
+/* --- CRT Burn-in Ghost Layer --- */
+#burnin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: none;
+  opacity: 0.03; /* Super subtle */
+  pointer-events: none;
+  z-index: 12; /* Between scanline and noise */
 }

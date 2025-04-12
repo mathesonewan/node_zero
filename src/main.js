@@ -31,11 +31,14 @@ window.addEventListener('resize', () => {
 
 // Simple input handling
 let commandBuffer = '';
+let overloadCounter = 0;
+let overloadTimeout;
 
 function prompt() {
   term.write('user@HackSim:~$ ');
 }
 
+// --- Main Keyboard Handler (single clean handler!) ---
 term.onKey(e => {
   const { key, domEvent } = e;
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
@@ -55,6 +58,19 @@ term.onKey(e => {
   } else if (printable) { // Normal characters
     commandBuffer += key;
     term.write(key);
+
+    // --- Typing Overload Detection ---
+    overloadCounter++;
+
+    if (overloadCounter > 15) { // Too many keypresses rapidly
+      triggerOverloadDistortion();
+      overloadCounter = 0;
+    }
+
+    clearTimeout(overloadTimeout);
+    overloadTimeout = setTimeout(() => {
+      overloadCounter = 0;
+    }, 1000); // Reset counter after 1 second
   }
 });
 
@@ -86,12 +102,11 @@ function randomizeScanline() {
   const randomCurve = scanlineCurves[Math.floor(Math.random() * scanlineCurves.length)];
   scanline.style.animationTimingFunction = randomCurve;
 
-  // Random time until next toggle (3 to 7 seconds)
-  const nextToggle = Math.random() * 4000 + 3000;
+  // Random time until next toggle (7–15 seconds)
+  const nextToggle = Math.random() * 8000 + 7000;
   setTimeout(randomizeScanline, nextToggle);
 }
 
-// Start randomizing scanline
 randomizeScanline();
 
 // --- Random Voltage Distortion ---
@@ -100,18 +115,106 @@ function randomDistortion() {
   const terminal = document.getElementById('terminal');
   if (!terminal) return;
 
-  // Randomly distort
   terminal.classList.add('distort');
 
-  // Hold distortion for 300ms then remove
   setTimeout(() => {
     terminal.classList.remove('distort');
   }, 300);
 
-  // Random time until next distortion (10–25 seconds)
-  const nextDistort = Math.random() * 15000 + 10000;
+  const nextDistort = Math.random() * 15000 + 10000; // 10-25 seconds
   setTimeout(randomDistortion, nextDistort);
 }
 
-// Start random voltage distortions
 randomDistortion();
+
+// --- Random Magnetic Pull Distortion ---
+
+function randomMagnetic() {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+
+  terminal.classList.add('magnetic');
+
+  setTimeout(() => {
+    terminal.classList.remove('magnetic');
+  }, 400);
+
+  const nextMagnetic = Math.random() * 30000 + 20000; // 20-50 seconds
+  setTimeout(randomMagnetic, nextMagnetic);
+}
+
+randomMagnetic();
+
+// --- Random Screen Shake ---
+
+function randomShake() {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+
+  terminal.classList.add('shake');
+
+  setTimeout(() => {
+    terminal.classList.remove('shake');
+  }, 500);
+
+  const nextShake = Math.random() * 30000 + 15000; // 15-45 seconds
+  setTimeout(randomShake, nextShake);
+}
+
+randomShake();
+
+// --- Overload Distortion (called from typing handler) ---
+
+function triggerOverloadDistortion() {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+
+  terminal.classList.add('magnetic');
+  terminal.classList.add('shake');
+
+  setTimeout(() => {
+    terminal.classList.remove('magnetic');
+    terminal.classList.remove('shake');
+  }, 500);
+}
+
+// --- CRT Burn-In Ghosting ---
+
+function updateBurnIn() {
+  const terminal = document.getElementById('terminal');
+  const burnin = document.getElementById('burnin');
+  if (!terminal || !burnin) return;
+
+  // Capture a "snapshot" of the current terminal state
+  burnin.style.backgroundImage = `url(${captureTerminal()})`;
+  burnin.style.backgroundSize = 'cover';
+
+  // Update again every 20–40 seconds
+  const nextUpdate = Math.random() * 20000 + 20000;
+  setTimeout(updateBurnIn, nextUpdate);
+}
+
+function captureTerminal() {
+  try {
+    const canvas = document.createElement('canvas');
+    const terminalEl = document.getElementById('terminal');
+    const rect = terminalEl.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = '#001100';
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    // NOTE: We simulate the capture, real xterm content isn't directly accessible without more tricks.
+    // This is a hack to just refresh a subtle ghosty background instead of the real text.
+
+    return canvas.toDataURL('image/png');
+  } catch (e) {
+    console.error('Burn-in capture failed:', e);
+    return '';
+  }
+}
+
+// Start burn-in updates
+updateBurnIn();
