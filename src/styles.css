@@ -139,12 +139,12 @@ html, body {
 #notesWrapper {
   position: fixed;
   top: 0;
-  right: -270px; /* <<< Start hidden (button peeking if you want) */
-  width: 300px;
+  right: -300px; /* <<< Wider start offset */
+  width: 320px; /* <<< Wrapper is bigger now */
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start; /* <<< Button aligned to left */
   transition: right 0.5s ease;
   z-index: 150;
 }
@@ -154,36 +154,44 @@ html, body {
   right: 0;
 }
 
-/* --- Notes Toggle Button --- */
+#notesWrapper {
+  position: fixed;
+  top: 0;
+  right: -250px; /* <<< Exactly move by the notes panel width */
+  width: 320px; /* <<< 70px (button) + 250px (panel) */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: right 0.5s ease;
+  z-index: 150;
+}
+
+/* Open state */
+#notesWrapper.open {
+  right: 0;
+}
+
+/* Button */
 #notesToggle {
+  width: 70px;
   height: 40px;
   background: transparent;
   color: #00FF00;
   font-family: 'Courier New', monospace;
   font-size: 14px;
   border: 1px solid #00FF00;
+  text-align: left;
+  padding-left: 10px;
   cursor: pointer;
 }
 
-/* --- Notes Panel --- */
+/* Notes panel */
 #notesPanel {
   flex-grow: 1;
+  width: 250px;
   background: rgba(0, 0, 0, 0.85);
   border-left: 2px solid #00FF00;
   display: flex;
   flex-direction: column;
-}
-
-/* --- NotesArea --- */
-#notesArea {
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  border: none;
-  resize: none;
-  outline: none;
 }
