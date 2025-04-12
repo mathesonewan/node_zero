@@ -93,3 +93,25 @@ function randomizeScanline() {
 
 // Start randomizing scanline
 randomizeScanline();
+
+// --- Random Voltage Distortion ---
+
+function randomDistortion() {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+
+  // Randomly distort
+  terminal.classList.add('distort');
+
+  // Hold distortion for 300ms then remove
+  setTimeout(() => {
+    terminal.classList.remove('distort');
+  }, 300);
+
+  // Random time until next distortion (10–25 seconds)
+  const nextDistort = Math.random() * 15000 + 10000;
+  setTimeout(randomDistortion, nextDistort);
+}
+
+// Start random voltage distortions
+randomDistortion();

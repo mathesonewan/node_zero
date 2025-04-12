@@ -94,3 +94,9 @@ html, body {
     background-position: 10px 10px;
   }
 }
+
+/* --- Distortion effect --- */
+.distort {
+  transform: scale(1.02) skewX(1deg) skewY(0.5deg);
+  transition: transform 0.2s ease;
+}
