@@ -4,7 +4,7 @@ import narrative from './narrative.js';
 import filesystem from './filesystem.js';
 import systems from './systems.js'; // <- Add this import at top of main.js
 let currentMachine = null;            // No machine connected yet
-let pendingLogin = '10.10.99.1';       // Default to the first SBC (auto-connecting to start)
+let pendingLogin = '10.10.10.99';       // Default to the first SBC (auto-connecting to start)
 let pendingUsername = '';              // Will capture user inputted username
 let awaitingUsername = false;          // FIRST ask for username
 let awaitingPassword = false;          // THEN ask for password
@@ -252,21 +252,29 @@ term.onKey(e => {
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
   if (domEvent.key === 'Enter') {
-    if (awaitingPassword) {
+    if (awaitingUsername) {
+      pendingUsername = commandBuffer.trim();
+      commandBuffer = '';
+      awaitingUsername = false;
+      awaitingPassword = true;
+      term.write('\r\nPassword: ');
+    } 
+    else if (awaitingPassword) {
       const target = systems.find(sys => sys.ip === pendingLogin);
-      if (target && commandBuffer === target.password) {
+      if (target && pendingUsername === target.username && commandBuffer === target.password) {
         term.writeln('\r\nWelcome to ' + target.hostname + '!');
         currentMachine = pendingLogin;
         currentPath = [];
       } else {
         term.writeln('\r\nAccess Denied.');
       }
-      pendingLogin = null;
       pendingUsername = '';
+      pendingLogin = '10.10.99.1'; // Reset to default SBC if login fails
       awaitingPassword = false;
       commandBuffer = '';
       prompt();
-    } else {
+    } 
+    else {
       if (commandBuffer.trim() !== '') {
         commandHistory.push(commandBuffer);
         historyIndex = commandHistory.length;
@@ -276,6 +284,8 @@ term.onKey(e => {
       commandBuffer = '';
     }
   }
+
+  
   
   
   else if (domEvent.key === 'Backspace') {
@@ -310,8 +320,13 @@ term.onKey(e => {
   } 
   
   else if (printable) {
-    commandBuffer += key;
-    term.write(key);
+    if (awaitingPassword) {
+      commandBuffer += key;
+      term.write('*');  // Mask password input
+    } else {
+      commandBuffer += key;
+      term.write(key);
+    }
   }
 });
 
