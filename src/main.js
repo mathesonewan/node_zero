@@ -3,7 +3,14 @@ import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+es
 import narrative from './narrative.js';
 import filesystem from './filesystem.js';
 import systems from './systems.js'; // <- Add this import at top of main.js
-let currentMachine = null;  // Not connected at start
+let currentMachine = null;            // No machine connected yet
+let pendingLogin = '10.10.99.1';       // Default to the first SBC (auto-connecting to start)
+let pendingUsername = '';              // Will capture user inputted username
+let awaitingUsername = false;          // FIRST ask for username
+let awaitingPassword = false;          // THEN ask for password
+let commandBuffer = '';
+let commandHistory = [];
+let historyIndex = -1;
 
 
 
@@ -135,7 +142,26 @@ function runCommand(input) {
     prompt();
     return;
   }
+ 
+  else if (command === 'ssh') {
+    if (args.length < 2 || !args[1].includes('@')) {
+      term.writeln('Usage: ssh username@ip');
+    } else {
+      const [username, ip] = args[1].split('@');
+      const target = systems.find(sys => sys.ip === ip);
+      if (target && target.username === username) {
+        pendingLogin = ip;
+        pendingUsername = username;
+        awaitingPassword = true;
+        term.write('\r\nPassword: ');
+      } else {
+        term.writeln('No such host or invalid username.');
+        prompt();
+      }
+    }
+  }
   
+
   else if (command === 'ping') {
     if (args.length < 2) {
       term.writeln('Usage: ping <ip>');
@@ -221,23 +247,36 @@ function runCommand(input) {
 
 // --- Capture User Input ---
 
-let commandBuffer = '';
-let commandHistory = [];
-let historyIndex = -1;
-
 term.onKey(e => {
   const { key, domEvent } = e;
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
   if (domEvent.key === 'Enter') {
-    if (commandBuffer.trim() !== '') {
-      commandHistory.push(commandBuffer);
-      historyIndex = commandHistory.length;
+    if (awaitingPassword) {
+      const target = systems.find(sys => sys.ip === pendingLogin);
+      if (target && commandBuffer === target.password) {
+        term.writeln('\r\nWelcome to ' + target.hostname + '!');
+        currentMachine = pendingLogin;
+        currentPath = [];
+      } else {
+        term.writeln('\r\nAccess Denied.');
+      }
+      pendingLogin = null;
+      pendingUsername = '';
+      awaitingPassword = false;
+      commandBuffer = '';
+      prompt();
+    } else {
+      if (commandBuffer.trim() !== '') {
+        commandHistory.push(commandBuffer);
+        historyIndex = commandHistory.length;
+      }
+      term.write('\r\n');
+      runCommand(commandBuffer);
+      commandBuffer = '';
     }
-    term.write('\r\n');
-    runCommand(commandBuffer);
-    commandBuffer = '';
-  } 
+  }
+  
   
   else if (domEvent.key === 'Backspace') {
     if (commandBuffer.length > 0) {
@@ -287,7 +326,10 @@ async function outputIntro() {
     await delay(300);
   }
 
-  prompt();
+  // Instead of prompt, start login process
+  term.writeln("\r\nConnecting to SBC_1...");
+  term.write("\r\nUsername: ");
+  awaitingUsername = true;
 }
 
 async function typeLine(line) {
