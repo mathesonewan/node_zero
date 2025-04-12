@@ -127,7 +127,18 @@ function runCommand(input) {
     prompt();
     return;
   }
-
+  
+  else if (command === 'ifconfig') {
+    term.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
+    term.writeln('        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255');
+    term.writeln('        ether b8:27:eb:ad:2b:0e  txqueuelen 1000  (Ethernet)');
+    term.writeln('        RX packets 12345  bytes 6789012 (6.7 MB)');
+    term.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
+    term.writeln('        inet6 fe80::ba27:ebff:fead:2b0e  prefixlen 64  scopeid 0x20<link>');
+    prompt();
+    return;
+  }
+  
   else {
     term.writeln(`Command not found: ${command}`);
   }
