@@ -263,26 +263,21 @@ function captureTerminal() {
 updateBurnIn();
 
 // --- Hacker Notes Panel ---
-
-// --- Hacker Notes Panel Toggle ---
-
-document.getElementById('notesToggle').addEventListener('click', () => {
-  const wrapper = document.getElementById('notesWrapper');
-  if (!wrapper) return;
-
-  const isOpen = wrapper.style.right === '0px';
-  wrapper.style.right = isOpen ? '-300px' : '0px';
-});
-
-
-// Auto-save notes to localStorage
-const notesArea = document.getElementById('notesArea');
-notesArea.addEventListener('input', () => {
-  localStorage.setItem('hackerNotes', notesArea.value);
-});
-
-// Load saved notes on startup
 window.addEventListener('load', () => {
+  const notesToggle = document.getElementById('notesToggle');
+  const notesWrapper = document.getElementById('notesWrapper');
+
+  if (notesToggle && notesWrapper) {
+    notesToggle.addEventListener('click', () => {
+      notesWrapper.classList.toggle('open');
+    });
+  }
+
+  const notesArea = document.getElementById('notesArea');
+  notesArea.addEventListener('input', () => {
+    localStorage.setItem('hackerNotes', notesArea.value);
+  });
+
   if (notesArea) {
     notesArea.value = localStorage.getItem('hackerNotes') || '';
   }
