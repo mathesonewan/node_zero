@@ -95,6 +95,21 @@ html, body {
   }
 }
 
+#notesArea {
+  flex-grow: 1; /* <<< This makes it stretch properly */
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  border: none;
+  resize: none;
+  outline: none;
+}
+
+
 /* --- Distortion effect (Overload) --- */
 .distort {
   transform: scaleX(1.02) skewX(1.5deg); /* Only horizontal scaling and skewing */
