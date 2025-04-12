@@ -127,7 +127,7 @@ function runCommand(input) {
     prompt();
     return;
   }
-  
+
   else if (command === 'ifconfig') {
     term.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
     term.writeln('        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255');
@@ -138,7 +138,21 @@ function runCommand(input) {
     prompt();
     return;
   }
+
+  else if (command === 'help') {
+    term.writeln('Available Commands:');
+    term.writeln('  ls           - List directory contents');
+    term.writeln('  cd <dir>     - Change directory');
+    term.writeln('  cd ..        - Go up a directory');
+    term.writeln('  cat <file>   - View file contents');
+    term.writeln('  clear        - Clear the screen');
+    term.writeln('  ifconfig     - View network settings');
+    term.writeln('  help         - Show this help message');
+    prompt();
+    return;
+  }
   
+
   else {
     term.writeln(`Command not found: ${command}`);
   }
