@@ -32,16 +32,24 @@ html, body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: none; /* <<< Only the button area is backgroundless */
+}
+
+/* Slide ONLY the panel */
+#menuPanel {
+  flex-grow: 1;
+  width: 100%;
   background: rgba(0, 0, 0, 0.85);
   border-left: 2px solid #00FF00;
-  transform: translateX(100%); /* Hide menu by default */
+  transform: translateX(100%); /* Hide panel by default */
   transition: transform 0.4s ease;
 }
 
-/* --- MENU Open State --- */
-#menuWrapper.open {
+/* When open, slide the panel in */
+#menuWrapper.open #menuPanel {
   transform: translateX(0);
 }
+
 
 /* --- MENU Toggle Button --- */
 #menuToggle {
