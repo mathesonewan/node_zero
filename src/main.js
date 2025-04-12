@@ -270,15 +270,22 @@ term.onKey(e => {
         term.writeln('\r\nWelcome to ' + target.hostname + '!');
         currentMachine = pendingLogin;
         currentPath = [];
+        awaitingPassword = false;
+        pendingUsername = '';
+        commandBuffer = '';
+        prompt(); // ✅ show shell prompt after successful login
       } else {
         term.writeln('\r\nAccess Denied.');
+        pendingUsername = '';
+        pendingLogin = '10.10.10.99'; // Reset to default SBC
+        awaitingPassword = false;
+        commandBuffer = '';
+        // 🔥 Immediately re-prompt for login again
+        term.write('\r\nUsername: ');
+        awaitingUsername = true;
       }
-      pendingUsername = '';
-      pendingLogin = '10.10.99.1'; // Reset to default SBC
-      awaitingPassword = false;
-      commandBuffer = '';
-      prompt();
-    } else {
+    }
+     else {
       if (commandBuffer.trim() !== '') {
         commandHistory.push(commandBuffer);
         historyIndex = commandHistory.length;
