@@ -2,20 +2,20 @@ import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';
 import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';
 import narrative from './narrative.js';
 import filesystem from './filesystem.js';
-import systems from './systems.js'; // <- Add this import at top of main.js
-let currentMachine = null;            // No machine connected yet
-let pendingLogin = '10.10.10.99';       // Default to the first SBC (auto-connecting to start)
-let pendingUsername = '';              // Will capture user inputted username
-let awaitingUsername = false;          // FIRST ask for username
-let awaitingPassword = false;          // THEN ask for password
+import systems from './systems.js';
+
+// --- Globals ---
+let currentMachine = null;
+let pendingLogin = '10.10.99.1'; // SBC IP
+let pendingUsername = '';
+let awaitingUsername = false;
+let awaitingPassword = false;
 let commandBuffer = '';
 let commandHistory = [];
 let historyIndex = -1;
-
-
+let currentPath = [];
 
 // --- Terminal Setup ---
-
 const term = new Terminal({
   theme: {
     background: '#001100',
@@ -41,12 +41,20 @@ window.addEventListener('resize', () => {
   fitAddon.fit();
 });
 
-// --- Fake Filesystem Setup ---
-
+// --- Filesystem Setup ---
 const fileSystem = filesystem;
 
-let currentPath = [];
+// --- Prompt ---
+function prompt() {
+  if (currentMachine) {
+    const machine = systems.find(sys => sys.ip === currentMachine);
+    term.write(`\r\n${machine ? machine.hostname : 'machine'}:/${currentPath.join('/')}$ `);
+  } else {
+    term.write(`\r\nuser@Network:/$ `);
+  }
+}
 
+// --- Get Directory ---
 function getCurrentDir() {
   let dir = fileSystem['/'];
   for (const part of currentPath) {
@@ -67,16 +75,14 @@ function getDirFromPath(base, pathArray) {
   return current;
 }
 
-
-// --- Prompt Handling ---
-
-function prompt() {
-  term.write(`\r\nuser@SBC_1:/${currentPath.join('/')}$ `);
+// --- Clear Current Input ---
+function clearCurrentInput() {
+  for (let i = 0; i < commandBuffer.length; i++) {
+    term.write('\b \b');
+  }
 }
 
-// --- Run Command Handling ---
-
-
+// --- Run Command ---
 function runCommand(input) {
   input = input.trim();
   const args = input.split(' ').filter(arg => arg.length > 0);
@@ -88,21 +94,15 @@ function runCommand(input) {
   }
 
   const dir = getCurrentDir();
-
   if (!dir) {
     term.writeln('Filesystem error: invalid path');
     prompt();
     return;
   }
 
-  else if (command === 'ls') {
+  if (command === 'ls') {
     const effectiveDir = getCurrentDir();
-  
     if (currentMachine) {
-      // You are inside a machine, start from that machine's node
-      if (!currentPath.length) {
-        term.writeln('Available folders:');
-      }
       const machineNode = fileSystem['/']['contents'][currentMachine];
       const pathNode = getDirFromPath(machineNode, currentPath);
       if (pathNode && pathNode.type === 'dir') {
@@ -111,7 +111,6 @@ function runCommand(input) {
         term.writeln('Not a directory.');
       }
     } else {
-      // You are outside, show IP addresses
       if (effectiveDir.type === 'dir') {
         term.writeln('Available Hosts:');
         term.writeln(Object.keys(effectiveDir.contents).join('    '));
@@ -120,7 +119,46 @@ function runCommand(input) {
       }
     }
   }
-  
+
+  else if (command === 'cd') {
+    if (!currentMachine) {
+      term.writeln('You must be connected to a machine to use cd.');
+    } else {
+      if (args.length < 2) {
+        term.writeln('Usage: cd <directory>');
+      } else {
+        const machineNode = fileSystem['/']['contents'][currentMachine];
+        const pathNode = getDirFromPath(machineNode, currentPath);
+
+        if (args[1] === '/') {
+          currentPath = [];
+        } else if (args[1] === '..') {
+          if (currentPath.length > 0) currentPath.pop();
+        } else if (pathNode && pathNode.contents && pathNode.contents[args[1]] && pathNode.contents[args[1]].type === 'dir') {
+          currentPath.push(args[1]);
+        } else {
+          term.writeln('No such directory: ' + args[1]);
+        }
+      }
+    }
+  }
+
+  else if (command === 'cat') {
+    if (!currentMachine) {
+      term.writeln('You must be connected to a machine to use cat.');
+    } else if (args.length < 2) {
+      term.writeln('Usage: cat <file>');
+    } else {
+      const machineNode = fileSystem['/']['contents'][currentMachine];
+      const pathNode = getDirFromPath(machineNode, currentPath);
+
+      if (pathNode && pathNode.contents && pathNode.contents[args[1]] && pathNode.contents[args[1]].type === 'file') {
+        term.writeln(pathNode.contents[args[1]].content);
+      } else {
+        term.writeln('No such file: ' + args[1]);
+      }
+    }
+  }
 
   else if (command === 'nmap') {
     if (args.length < 2) {
@@ -142,25 +180,6 @@ function runCommand(input) {
     prompt();
     return;
   }
- 
-  else if (command === 'ssh') {
-    if (args.length < 2 || !args[1].includes('@')) {
-      term.writeln('Usage: ssh username@ip');
-    } else {
-      const [username, ip] = args[1].split('@');
-      const target = systems.find(sys => sys.ip === ip);
-      if (target && target.username === username) {
-        pendingLogin = ip;
-        pendingUsername = username;
-        awaitingPassword = true;
-        term.write('\r\nPassword: ');
-      } else {
-        term.writeln('No such host or invalid username.');
-        prompt();
-      }
-    }
-  }
-  
 
   else if (command === 'ping') {
     if (args.length < 2) {
@@ -178,32 +197,21 @@ function runCommand(input) {
     return;
   }
 
-  else if (command === 'cd') {
-    if (args.length < 2) {
-      term.writeln('Usage: cd <directory>');
-    } else if (args[1] === '..') {
-      if (currentPath.length > 0) currentPath.pop();
-    } 
-    
-    else if (args[1] === '/') {
-      currentPath = [];
-    }
-    
-    
-    else if (dir.contents[args[1]] && dir.contents[args[1]].type === 'dir') {
-      currentPath.push(args[1]);
+  else if (command === 'ssh') {
+    if (args.length < 2 || !args[1].includes('@')) {
+      term.writeln('Usage: ssh username@ip');
     } else {
-      term.writeln('No such directory: ' + args[1]);
-    }
-  }
-
-  else if (command === 'cat') {
-    if (args.length < 2) {
-      term.writeln('Usage: cat <file>');
-    } else if (dir.contents[args[1]] && dir.contents[args[1]].type === 'file') {
-      term.writeln(dir.contents[args[1]].content);
-    } else {
-      term.writeln('No such file: ' + args[1]);
+      const [username, ip] = args[1].split('@');
+      const target = systems.find(sys => sys.ip === ip);
+      if (target && target.username === username) {
+        pendingLogin = ip;
+        pendingUsername = username;
+        awaitingPassword = true;
+        term.write('\r\nPassword: ');
+      } else {
+        term.writeln('No such host or invalid username.');
+        prompt();
+      }
     }
   }
 
@@ -236,7 +244,6 @@ function runCommand(input) {
     prompt();
     return;
   }
-  
 
   else {
     term.writeln(`Command not found: ${command}`);
@@ -245,8 +252,7 @@ function runCommand(input) {
   prompt();
 }
 
-// --- Capture User Input ---
-
+// --- Input Handling ---
 term.onKey(e => {
   const { key, domEvent } = e;
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
@@ -258,8 +264,7 @@ term.onKey(e => {
       awaitingUsername = false;
       awaitingPassword = true;
       term.write('\r\nPassword: ');
-    } 
-    else if (awaitingPassword) {
+    } else if (awaitingPassword) {
       const target = systems.find(sys => sys.ip === pendingLogin);
       if (target && pendingUsername === target.username && commandBuffer === target.password) {
         term.writeln('\r\nWelcome to ' + target.hostname + '!');
@@ -269,12 +274,11 @@ term.onKey(e => {
         term.writeln('\r\nAccess Denied.');
       }
       pendingUsername = '';
-      pendingLogin = '10.10.99.1'; // Reset to default SBC if login fails
+      pendingLogin = '10.10.99.1'; // Reset to default SBC
       awaitingPassword = false;
       commandBuffer = '';
       prompt();
-    } 
-    else {
+    } else {
       if (commandBuffer.trim() !== '') {
         commandHistory.push(commandBuffer);
         historyIndex = commandHistory.length;
@@ -285,30 +289,25 @@ term.onKey(e => {
     }
   }
 
-  
-  
-  
   else if (domEvent.key === 'Backspace') {
     if (commandBuffer.length > 0) {
       commandBuffer = commandBuffer.slice(0, -1);
       term.write('\b \b');
     }
-  } 
-  
+  }
+
   else if (domEvent.key === 'ArrowUp') {
     if (historyIndex > 0) {
       historyIndex--;
-      // Clear current line
       clearCurrentInput();
       commandBuffer = commandHistory[historyIndex] || '';
       term.write(commandBuffer);
     }
-  } 
-  
+  }
+
   else if (domEvent.key === 'ArrowDown') {
     if (historyIndex < commandHistory.length - 1) {
       historyIndex++;
-      // Clear current line
       clearCurrentInput();
       commandBuffer = commandHistory[historyIndex] || '';
       term.write(commandBuffer);
@@ -317,12 +316,12 @@ term.onKey(e => {
       clearCurrentInput();
       commandBuffer = '';
     }
-  } 
-  
+  }
+
   else if (printable) {
     if (awaitingPassword) {
       commandBuffer += key;
-      term.write('*');  // Mask password input
+      term.write('*');
     } else {
       commandBuffer += key;
       term.write(key);
@@ -330,18 +329,13 @@ term.onKey(e => {
   }
 });
 
-
-// --- Output Narrative on Startup ---
-
+// --- Boot Sequence ---
 async function outputIntro() {
-  await delay(1500); // Startup pause
-
+  await delay(1500);
   for (const line of narrative.intro) {
     await typeLine(line);
     await delay(300);
   }
-
-  // Instead of prompt, start login process
   term.writeln("\r\nConnecting to SBC_1...");
   term.write("\r\nUsername: ");
   awaitingUsername = true;
@@ -350,10 +344,8 @@ async function outputIntro() {
 async function typeLine(line) {
   for (const char of line) {
     term.write(char);
-    await delay(20); // Faster typing speed (your custom setting!)
-    if (Math.random() < 0.03) {
-      tinyFlicker();
-    }
+    await delay(20);
+    if (Math.random() < 0.03) tinyFlicker();
   }
   term.write('\r\n');
 }
@@ -361,7 +353,6 @@ async function typeLine(line) {
 function tinyFlicker() {
   const terminal = document.getElementById('terminal');
   if (!terminal) return;
-
   terminal.style.opacity = '0.8';
   setTimeout(() => {
     terminal.style.opacity = '1';
@@ -372,11 +363,9 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Start intro sequence
 outputIntro();
 
-// --- Notes Panel Toggle (Button and Panel Slide Together) ---
-
+// --- Notes Panel ---
 window.addEventListener('load', () => {
   const notesToggle = document.getElementById('notesToggle');
   const notesWrapper = document.getElementById('notesWrapper');
@@ -396,10 +385,3 @@ window.addEventListener('load', () => {
     notesArea.value = localStorage.getItem('hackerNotes') || '';
   }
 });
-
-function clearCurrentInput() {
-  // Move cursor back over current input and clear it visually
-  for (let i = 0; i < commandBuffer.length; i++) {
-    term.write('\b \b');
-  }
-}
