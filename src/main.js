@@ -267,9 +267,13 @@ updateBurnIn();
 // --- Hacker Notes Panel Toggle ---
 
 document.getElementById('notesToggle').addEventListener('click', () => {
-  const panel = document.getElementById('notesPanel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  const wrapper = document.getElementById('notesWrapper');
+  if (!wrapper) return;
+
+  const isOpen = wrapper.style.right === '0px';
+  wrapper.style.right = isOpen ? '-300px' : '0px';
 });
+
 
 // Auto-save notes to localStorage
 const notesArea = document.getElementById('notesArea');
@@ -283,4 +287,3 @@ window.addEventListener('load', () => {
     notesArea.value = localStorage.getItem('hackerNotes') || '';
   }
 });
-

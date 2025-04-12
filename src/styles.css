@@ -135,16 +135,42 @@ html, body {
 }
 
 /* --- Hacker Notes Overlay --- */
-#notesPanel {
+/* --- Notes Wrapper --- */
+#notesWrapper {
   position: fixed;
   top: 0;
-  right: 0;
+  right: -300px; /* Start hidden off-screen */
   width: 300px;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85); /* Slightly transparent black */
-  border-left: 2px solid #00FF00; /* Green border like terminal border */
-  display: none;
-  z-index: 100; /* Above all terminal layers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: right 0.5s ease;
+  z-index: 150;
+}
+
+/* --- Notes Toggle Button --- */
+#notesToggle {
+  padding: 8px 12px;
+  background: transparent;
+  color: #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  border: 1px solid #00FF00;
+  cursor: pointer;
+}
+
+#notesToggle:hover {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+/* --- Notes Panel --- */
+#notesPanel {
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.85);
+  border-left: 2px solid #00FF00;
+  display: flex;
+  flex-direction: column;
 }
 
 #notesArea {
@@ -158,32 +184,4 @@ html, body {
   border: none;
   resize: none;
   outline: none;
-}
-/* --- Notes Toggle Button --- */
-#notesToggle {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  padding: 8px 12px;
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  border: 1px solid #00FF00;
-  cursor: pointer;
-  z-index: 150;
-}
-
-#notesToggle:hover {
-  background: rgba(0, 255, 0, 0.1);
-}
-
-/* --- Hide xterm.js internal scrollbar --- */
-#terminal .xterm-viewport {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-}
-
-#terminal .xterm-viewport::-webkit-scrollbar {
-  display: none; /* Safari + Chrome */
 }
