@@ -1,5 +1,4 @@
 import { Terminal } from 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/+esm';  // xterm.js library
-import { FitAddon } from 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/+esm';  // FitAddon for resizing the terminal
 import narrative from './narrative.js';  // Import the narrative content
 
 // Initialize the terminal
@@ -10,23 +9,18 @@ const term = new Terminal({
     cursor: '#00FF00',      // Green cursor
     selection: '#005500'    // Darker green selection highlight
   },
-  fontFamily: 'Courier New, monospace',
+  fontFamily: 'Courier New',  // Font family
   fontSize: 14,
   cursorBlink: true,
   cursorStyle: 'block',
-  scrollback: 1000,  // Allow up to 1000 lines of scrollback history
-  screenKeys: true,   // Ensure that the terminal has keys that manage scrolling
-  convertEol: true,   // Proper handling of end-of-line characters
-  scrollSensitivity: 1 // Improve scrolling behavior
+  scrollback: 1000,
+  screenKeys: true,
+  convertEol: true,
+  disableStdin: false
 });
 
 // Open the terminal inside the element with id "terminal"
 term.open(document.getElementById('terminal'));
-
-// Use FitAddon to make the terminal resize to fit the window
-const fitAddon = new FitAddon();
-term.loadAddon(fitAddon);
-fitAddon.fit();  // Apply fitAddon to make sure it adjusts to the screen size
 
 // Initialize the command buffer and history
 let commandBuffer = '';
@@ -142,8 +136,8 @@ function runCommand(input) {
 
   // Handle 'clear' command: Clear the terminal screen
   else if (command === 'clear') {
-    term.clear();  // Clear the terminal's screen
-    prompt();  // Re-display the prompt
+    term.clear();
+    prompt();
     return;
   }
 
@@ -151,7 +145,7 @@ function runCommand(input) {
     term.writeln(`Command not found: ${command}`);
   }
 
-  prompt();  // Return to the prompt for the next command
+  prompt();
 }
 
 // Capture user input from the terminal
@@ -165,27 +159,22 @@ term.onKey(e => {
       historyIndex = commandHistory.length;
     }
     term.writeln('');
-    runCommand(commandBuffer);  // Run the command entered by the user
-    commandBuffer = '';  // Reset the commandBuffer after running the command
+    runCommand(commandBuffer);
+    commandBuffer = '';
   } else if (domEvent.keyCode === 8) {  // Backspace key pressed
     if (commandBuffer.length > 0) {
       commandBuffer = commandBuffer.slice(0, -1);
-      term.write('\b \b');  // Erase the last character
+      term.write('\b \b');
     }
   } else if (printable) {
     commandBuffer += key;
-    term.write(key);  // Write the key to the terminal
+    term.write(key);
   }
-
-  // Scroll to the bottom and keep the cursor in place after each output
-  term.scrollToBottom();  // Ensure terminal scrolls to the bottom
-  fitAddon.fit();  // Ensure terminal resizes when the screen size changes
 });
 
 // Display the narrative text line by line
 narrative.intro.forEach(line => {
-  term.writeln(line);  // Output each line
+  term.writeln(line);
 });
 
-// Display the prompt after narrative
-prompt();
+// Display the prompt after the narrative and focus on the terminal for input
