@@ -26,32 +26,33 @@ html, body {
   text-shadow: 0 0 2px #00FF00, 0 0 6px #00FF00;
 }
 
-/* --- MENU Wrapper --- */
 #menuWrapper {
   width: 320px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: none; /* <<< Only the button area is backgroundless */
+  background: none; /* No background on the wrapper */
+  position: relative;
 }
 
-/* Slide ONLY the panel */
-#menuPanel {
-  flex-grow: 1;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  border-left: 2px solid #00FF00;
-  transform: translateX(100%); /* Hide panel by default */
+/* Slide the whole menuSlide block */
+#menuSlide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%); /* Hide by default */
   transition: transform 0.4s ease;
 }
 
-/* When open, slide the panel in */
-#menuWrapper.open #menuPanel {
-  transform: translateX(0);
+#menuWrapper.open #menuSlide {
+  transform: translateX(0); /* Slide in when open */
 }
 
-
-/* --- MENU Toggle Button --- */
+/* MENU Button */
 #menuToggle {
   width: 100%;
   height: 50px;
@@ -66,15 +67,15 @@ html, body {
   cursor: pointer;
 }
 
-/* --- MENU Panel --- */
+/* MENU Panel */
 #menuPanel {
   flex-grow: 1;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  background: rgba(0, 0, 0, 0.85);
+  border-left: 2px solid #00FF00;
 }
 
-/* --- Menu Textarea --- */
+/* Textarea inside the panel */
 #menuArea {
   flex-grow: 1;
   width: 100%;
@@ -88,6 +89,7 @@ html, body {
   resize: none;
   outline: none;
 }
+
 
 /* --- Hide xterm.js internal scrollbar --- */
 #terminal .xterm-viewport {
