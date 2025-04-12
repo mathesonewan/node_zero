@@ -105,7 +105,14 @@ function runCommand(input) {
       term.writeln('Usage: cd <directory>');
     } else if (args[1] === '..') {
       if (currentPath.length > 0) currentPath.pop();
-    } else if (dir.contents[args[1]] && dir.contents[args[1]].type === 'dir') {
+    } 
+    
+    else if (args[1] === '/') {
+      currentPath = [];
+    }
+    
+    
+    else if (dir.contents[args[1]] && dir.contents[args[1]].type === 'dir') {
       currentPath.push(args[1]);
     } else {
       term.writeln('No such directory: ' + args[1]);
