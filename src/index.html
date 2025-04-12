@@ -12,20 +12,24 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="notesWrapper">
-    <button id="notesToggle">NOTES</button>
-    <div id="notesPanel">
-      <textarea id="notesArea" placeholder="Start typing your hacker notes here..."></textarea>
-    </div>
-  </div>
-  
-  
-  <div id="terminal"></div>
-<div id="scanline"></div>
-<div id="burnin"></div>
-<div id="noise"></div>
-<div id="noise2"></div>
+  <div id="container"> <!-- NEW WRAPPER for terminal + menu -->
 
-<script type="module" src="main.js"></script>  <!-- Only this one! -->
+    <div id="terminal"></div>
+
+    <div id="menuWrapper">
+      <button id="menuToggle">MENU</button>
+      <div id="menuPanel">
+        <textarea id="menuArea" placeholder="Start typing your notes here..."></textarea>
+      </div>
+    </div>
+
+  </div> <!-- END #container -->
+
+  <div id="scanline"></div>
+  <div id="burnin"></div>
+  <div id="noise"></div>
+  <div id="noise2"></div>
+
+  <script type="module" src="main.js"></script>
 </body>
 </html>
