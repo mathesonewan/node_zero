@@ -4,6 +4,7 @@ import narrative from './narrative.js';
 import filesystem from './filesystem.js';
 import systems from './systems.js';
 
+// --- Terminal Setup ---
 const term = new Terminal({
   theme: {
     background: '#001100',
@@ -29,8 +30,7 @@ window.addEventListener('resize', () => {
   fitAddon.fit();
 });
 
-// --- Terminal Setup Complete ---
-
+// --- System Variables ---
 const fileSystem = filesystem;
 let currentMachine = null;
 let pendingLogin = '10.10.10.99';
@@ -106,74 +106,8 @@ function runCommand(input) {
     }
   }
 
-  else if (command === 'nmap') {
-    if (args.length < 2) {
-      term.writeln('Usage: nmap <subnet>');
-    } else {
-      const subnet = args[1].split('/')[0].split('.').slice(0, 3).join('.') + '.';
-      term.writeln(`Starting Nmap scan on ${subnet}0/24`);
-      let found = false;
-      systems.forEach(system => {
-        if (system.ip.startsWith(subnet)) {
-          term.writeln(`Host ${system.ip} (${system.hostname}) is up`);
-          found = true;
-        }
-      });
-      if (!found) {
-        term.writeln('No hosts found.');
-      }
-    }
-    prompt();
-    return;
-  }
-
-  else if (command === 'ssh') {
-    if (args.length < 2 || !args[1].includes('@')) {
-      term.writeln('Usage: ssh username@ip');
-    } else {
-      const [username, ip] = args[1].split('@');
-      const target = systems.find(sys => sys.ip === ip);
-      if (target && target.username === username) {
-        pendingLogin = ip;
-        pendingUsername = username;
-        awaitingPassword = true;
-        term.write('\r\nPassword: ');
-      } else {
-        term.writeln('No such host or invalid username.');
-        prompt();
-      }
-    }
-  }
-
-  else if (command === 'ping') {
-    if (args.length < 2) {
-      term.writeln('Usage: ping <ip>');
-    } else {
-      const targetIp = args[1];
-      const target = systems.find(system => system.ip === targetIp);
-      if (target) {
-        term.writeln(`Pinging ${targetIp} (${target.hostname})... Success!`);
-      } else {
-        term.writeln(`Pinging ${targetIp}... No response.`);
-      }
-    }
-    prompt();
-    return;
-  }
-
   else if (command === 'clear') {
     term.clear();
-    prompt();
-    return;
-  }
-
-  else if (command === 'ifconfig') {
-    term.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
-    term.writeln('        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255');
-    term.writeln('        ether b8:27:eb:ad:2b:0e  txqueuelen 1000  (Ethernet)');
-    term.writeln('        RX packets 12345  bytes 6789012 (6.7 MB)');
-    term.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
-    term.writeln('        inet6 fe80::ba27:ebff:fead:2b0e  prefixlen 64  scopeid 0x20<link>');
     prompt();
     return;
   }
@@ -181,10 +115,7 @@ function runCommand(input) {
   else if (command === 'help') {
     term.writeln('Available Commands:');
     term.writeln('  ls           - List directory contents');
-    term.writeln('  cd <dir>     - Change directory');
-    term.writeln('  cat <file>   - View file contents');
     term.writeln('  clear        - Clear the screen');
-    term.writeln('  ifconfig     - View network settings');
     term.writeln('  help         - Show this help message');
     prompt();
     return;
@@ -232,89 +163,118 @@ function clearCurrentInput() {
 // --- Boot the Intro ---
 outputIntro();
 
-// --- Safe Event Attachments ---
-window.addEventListener('load', () => {
-  const menuButton = document.getElementById('menuButton');
-  const menuOverlay = document.getElementById('menuOverlay');
-  const closeMenu = document.getElementById('closeMenu');
-  const audioToggle = document.getElementById('audioToggle');
-  const textSpeedInput = document.getElementById('textSpeed');
-  const instantTextButton = document.getElementById('instantText');
-  const skipBootToggle = document.getElementById('skipBoot');
-  const flickerLevelSelect = document.getElementById('flickerLevel');
-  const scanlinesToggle = document.getElementById('scanlinesToggle');
-  const themeSelect = document.getElementById('themeSelect');
+// --- Terminal Key Input Handler ---
+term.onKey(e => {
+  const { key, domEvent } = e;
+  const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
-  if (menuButton && menuOverlay && closeMenu) {
-    menuButton.addEventListener('click', () => {
-      menuOverlay.style.display = 'flex';
-      menuButton.style.display = 'none'; // <-- ADD THIS
-    });
-    
-    closeMenu.addEventListener('click', () => {
-      menuOverlay.style.display = 'none';
-      menuButton.style.display = 'block'; // <-- ADD THIS
-    });
-    // Just placeholder logs for now
-if (audioToggle) {
-  audioToggle.addEventListener('change', () => {
-    console.log("Audio toggle:", audioToggle.checked);
-  });
-}
+  if (domEvent.key === 'Enter') {
+    if (awaitingUsername) {
+      pendingUsername = commandBuffer.trim();
+      commandBuffer = '';
+      awaitingUsername = false;
+      awaitingPassword = true;
+      term.write('\r\nPassword: ');
+    } 
+    else if (awaitingPassword) {
+      const target = systems.find(sys => sys.ip === pendingLogin);
+      if (target && pendingUsername === target.username && commandBuffer === target.password) {
+        term.writeln('\r\nWelcome to ' + target.hostname + '!');
+        currentMachine = pendingLogin;
+        currentPath = [];
+      } else {
+        term.writeln('\r\nAccess Denied.');
+      }
+      pendingUsername = '';
+      pendingLogin = '10.10.99.1';
+      awaitingPassword = false;
+      commandBuffer = '';
+      prompt();
+    } 
+    else {
+      if (commandBuffer.trim() !== '') {
+        commandHistory.push(commandBuffer);
+        historyIndex = commandHistory.length;
+      }
+      term.write('\r\n');
+      runCommand(commandBuffer);
+      commandBuffer = '';
+    }
+  }
 
-if (textSpeedInput) {
-  textSpeedInput.addEventListener('input', () => {
-    console.log("Text Speed:", textSpeedInput.value);
-  });
-}
+  else if (domEvent.key === 'Backspace') {
+    if (commandBuffer.length > 0) {
+      commandBuffer = commandBuffer.slice(0, -1);
+      term.write('\b \b');
+    }
+  }
 
-if (instantTextButton) {
-  instantTextButton.addEventListener('click', () => {
-    console.log("Instant text mode activated.");
-    textSpeedInput.value = 0;
-  });
-}
+  else if (domEvent.key === 'ArrowUp') {
+    if (historyIndex > 0) {
+      historyIndex--;
+      clearCurrentInput();
+      commandBuffer = commandHistory[historyIndex] || '';
+      term.write(commandBuffer);
+    }
+  }
 
-if (skipBootToggle) {
-  skipBootToggle.addEventListener('change', () => {
-    console.log("Skip boot:", skipBootToggle.checked);
-  });
-}
+  else if (domEvent.key === 'ArrowDown') {
+    if (historyIndex < commandHistory.length - 1) {
+      historyIndex++;
+      clearCurrentInput();
+      commandBuffer = commandHistory[historyIndex] || '';
+      term.write(commandBuffer);
+    } else {
+      historyIndex = commandHistory.length;
+      clearCurrentInput();
+      commandBuffer = '';
+    }
+  }
 
-if (flickerLevelSelect) {
-  flickerLevelSelect.addEventListener('change', () => {
-    console.log("Flicker level:", flickerLevelSelect.value);
-  });
-}
-
-if (scanlinesToggle) {
-  scanlinesToggle.addEventListener('change', () => {
-    console.log("Scanlines toggle:", scanlinesToggle.checked);
-  });
-}
-
-if (themeSelect) {
-  themeSelect.addEventListener('change', () => {
-    console.log("Theme selected:", themeSelect.value);
-  });
-}
+  else if (printable) {
+    if (awaitingPassword) {
+      commandBuffer += key;
+      term.write('*');
+    } else {
+      commandBuffer += key;
+      term.write(key);
+    }
   }
 });
 
+// --- Scanline Randomized Movement (Reinjected) ---
 const scanline = document.getElementById('scanline');
 
 function randomizeScanlineTiming() {
   const curves = [
-    'cubic-bezier(0.25, 0.1, 0.25, 1.0)', // Ease
-    'cubic-bezier(0.42, 0, 0.58, 1.0)',   // Ease-in-out
-    'cubic-bezier(0.4, 0.0, 1, 1)',       // Ease-out
-    'cubic-bezier(0.0, 0.0, 0.2, 1)',     // Ease-in
-    'cubic-bezier(0.5, 1.5, 0.5, 1)',     // Crazy overshoot
-    'linear'                              // Boring fallback
+    'cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+    'cubic-bezier(0.42, 0, 0.58, 1.0)',
+    'cubic-bezier(0.4, 0.0, 1, 1)',
+    'cubic-bezier(0.0, 0.0, 0.2, 1)',
+    'cubic-bezier(0.5, 1.5, 0.5, 1)',
+    'linear'
   ];
   const randomCurve = curves[Math.floor(Math.random() * curves.length)];
   scanline.style.animationTimingFunction = randomCurve;
 }
 
-// Keep changing it every few seconds
 setInterval(randomizeScanlineTiming, 4000);
+
+// --- Menu Button and Overlay Logic ---
+window.addEventListener('load', () => {
+  const menuButton = document.getElementById('menuButton');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const closeMenu = document.getElementById('closeMenu');
+
+  if (menuButton && menuOverlay && closeMenu) {
+    menuButton.addEventListener('click', () => {
+      menuOverlay.style.display = 'flex';
+      menuButton.style.display = 'none';
+    });
+
+    closeMenu.addEventListener('click', () => {
+      menuOverlay.style.display = 'none';
+      menuButton.style.display = 'block';
+    });
+  }
+});
