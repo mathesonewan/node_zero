@@ -44,6 +44,9 @@ let commandHistory = [];
 let historyIndex = -1;
 let currentPath = [];
 let typingDelay = 20; // Default typing speed (ms per character)
+let cursorPosition = 0; // <-- NEW: tracks cursor position within input
+
+
 
 
 // --- Filesystem Functions ---
@@ -260,20 +263,22 @@ term.onKey(e => {
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
   if (domEvent.key === 'Enter') {
+    domEvent.preventDefault();
+    term.write('\r\n');
+    
     if (awaitingUsername) {
       pendingUsername = commandBuffer.trim();
       commandBuffer = '';
+      cursorPosition = 0;
       awaitingUsername = false;
       awaitingPassword = true;
-      term.write('\r\nPassword: ');
-    } 
-    else if (awaitingPassword) {
+      term.write('Password: ');
+    } else if (awaitingPassword) {
       const target = systems.find(sys => sys.ip === pendingLogin);
       if (target && pendingUsername === target.username && commandBuffer === target.password) {
         term.writeln('\r\nWelcome to ' + target.hostname + '!');
         currentUsername = pendingUsername;
-        const fullHost = target.hostname || 'unknown.local';
-        currentHostname = fullHost.replace('.local', '');
+        currentHostname = target.hostname.replace('.local', '');
         currentMachine = pendingLogin;
         currentPath = [];
       } else {
@@ -283,58 +288,90 @@ term.onKey(e => {
       pendingLogin = '10.10.99.1';
       awaitingPassword = false;
       commandBuffer = '';
+      cursorPosition = 0;
       prompt();
-    } 
-    else {
+    } else {
       if (commandBuffer.trim() !== '') {
         commandHistory.push(commandBuffer);
-        historyIndex = commandHistory.length;
       }
-      term.write('\r\n');
+      historyIndex = commandHistory.length;
       runCommand(commandBuffer);
       commandBuffer = '';
+      cursorPosition = 0;
     }
   }
 
   else if (domEvent.key === 'Backspace') {
-    if (commandBuffer.length > 0) {
-      commandBuffer = commandBuffer.slice(0, -1);
-      term.write('\b \b');
+    domEvent.preventDefault();
+    if (cursorPosition > 0) {
+      commandBuffer = commandBuffer.slice(0, cursorPosition - 1) + commandBuffer.slice(cursorPosition);
+      cursorPosition--;
+      refreshLine();
     }
   }
 
   else if (domEvent.key === 'ArrowUp') {
+    domEvent.preventDefault();
     if (historyIndex > 0) {
       historyIndex--;
-      clearCurrentInput();
       commandBuffer = commandHistory[historyIndex] || '';
-      term.write(commandBuffer);
+      cursorPosition = commandBuffer.length;
+      refreshLine();
     }
   }
 
   else if (domEvent.key === 'ArrowDown') {
+    domEvent.preventDefault();
     if (historyIndex < commandHistory.length - 1) {
       historyIndex++;
-      clearCurrentInput();
       commandBuffer = commandHistory[historyIndex] || '';
-      term.write(commandBuffer);
     } else {
       historyIndex = commandHistory.length;
-      clearCurrentInput();
       commandBuffer = '';
+    }
+    cursorPosition = commandBuffer.length;
+    refreshLine();
+  }
+
+  else if (domEvent.key === 'ArrowLeft') {
+    domEvent.preventDefault();
+    if (cursorPosition > 0) {
+      term.write('\x1b[D'); // ANSI move cursor left
+      cursorPosition--;
+    }
+  }
+
+  else if (domEvent.key === 'ArrowRight') {
+    domEvent.preventDefault();
+    if (cursorPosition < commandBuffer.length) {
+      term.write('\x1b[C'); // ANSI move cursor right
+      cursorPosition++;
     }
   }
 
   else if (printable) {
-    if (awaitingPassword) {
-      commandBuffer += key;
-      term.write('*');
-    } else {
-      commandBuffer += key;
-      term.write(key);
-    }
+    domEvent.preventDefault();
+    commandBuffer = commandBuffer.slice(0, cursorPosition) + key + commandBuffer.slice(cursorPosition);
+    cursorPosition++;
+    refreshLine();
   }
 });
+
+// --- Refresh Line ---
+
+function refreshLine() {
+  // Clear current line and rewrite prompt + buffer
+  term.write('\x1b[2K\r'); // Clear current line entirely (ANSI escape sequence)
+  term.write(`${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ ${commandBuffer}`);
+
+  // Move cursor to the correct position after buffer redraw
+  const promptLength = (`${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ `).length;
+  const cursorMoveLeft = commandBuffer.length - cursorPosition;
+  if (cursorMoveLeft > 0) {
+    term.write(`\x1b[${cursorMoveLeft}D`);
+  }
+}
+
 
 // --- Scanline Randomized Movement ---
 const scanline = document.getElementById('scanline');
