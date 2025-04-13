@@ -265,32 +265,56 @@ term.onKey(e => {
   if (domEvent.key === 'Enter') {
     domEvent.preventDefault();
     term.write('\r\n');
-    
+  
     if (awaitingUsername) {
-      pendingUsername = commandBuffer.trim();
-      commandBuffer = '';
-      cursorPosition = 0;
-      awaitingUsername = false;
-      awaitingPassword = true;
-      term.write('Password: ');
-    } else if (awaitingPassword) {
+      const inputUsername = commandBuffer.trim();
+      const validUsernames = systems.map(sys => sys.username);
+  
+      if (validUsernames.includes(inputUsername)) {
+        pendingUsername = inputUsername;
+        commandBuffer = '';
+        cursorPosition = 0;
+        awaitingUsername = false;
+        awaitingPassword = true;
+        term.write('Password: ');
+      } else {
+        term.writeln(`\r\nInvalid username.`);
+        commandBuffer = '';
+        cursorPosition = 0;
+        refreshLine(); // Re-render Username prompt
+      }
+    }
+    else if (awaitingPassword) {
       const target = systems.find(sys => sys.ip === pendingLogin);
+    
       if (target && pendingUsername === target.username && commandBuffer === target.password) {
+        // ✅ Correct password
         term.writeln('\r\nWelcome to ' + target.hostname + '!');
         currentUsername = pendingUsername;
         currentHostname = target.hostname.replace('.local', '');
         currentMachine = pendingLogin;
         currentPath = [];
+    
+        pendingUsername = '';
+        pendingLogin = '10.10.10.99';
+        awaitingPassword = false;
+        commandBuffer = '';
+        cursorPosition = 0;
+        prompt(); // Move into shell normally
       } else {
+        // ❌ Incorrect password
         term.writeln('\r\nAccess Denied.');
+        pendingUsername = '';
+        pendingLogin = '10.10.10.99';
+        awaitingPassword = false;
+        awaitingUsername = true;  // <-- Only re-prompt username on fail
+        commandBuffer = '';
+        cursorPosition = 0;
+        term.writeln('\r\nReturning to login...');
+        refreshLine(); // Show fresh Username prompt
       }
-      pendingUsername = '';
-      pendingLogin = '10.10.99.1';
-      awaitingPassword = false;
-      commandBuffer = '';
-      cursorPosition = 0;
-      prompt();
-    } else {
+    }
+     else {
       if (commandBuffer.trim() !== '') {
         commandHistory.push(commandBuffer);
       }
@@ -360,17 +384,29 @@ term.onKey(e => {
 // --- Refresh Line ---
 
 function refreshLine() {
-  // Clear current line and rewrite prompt + buffer
-  term.write('\x1b[2K\r'); // Clear current line entirely (ANSI escape sequence)
-  term.write(`${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ ${commandBuffer}`);
+  term.write('\x1b[2K\r'); // Clear entire line
+  
+  if (awaitingUsername) {
+    term.write('Username: ' + commandBuffer);
+  } else if (awaitingPassword) {
+    term.write('Password: ' + '*'.repeat(commandBuffer.length)); // Hide password
+  } else {
+    term.write(`${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ ${commandBuffer}`);
+  }
 
-  // Move cursor to the correct position after buffer redraw
-  const promptLength = (`${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ `).length;
+  const promptLength = (() => {
+    if (awaitingUsername) return 'Username: '.length;
+    if (awaitingPassword) return 'Password: '.length;
+    return (`${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ `).length;
+  })();
+
   const cursorMoveLeft = commandBuffer.length - cursorPosition;
   if (cursorMoveLeft > 0) {
     term.write(`\x1b[${cursorMoveLeft}D`);
   }
 }
+
+
 
 
 // --- Scanline Randomized Movement ---
