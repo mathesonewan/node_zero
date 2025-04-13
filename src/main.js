@@ -4,18 +4,6 @@ import narrative from './narrative.js';
 import filesystem from './filesystem.js';
 import systems from './systems.js';
 
-// --- Globals ---
-let currentMachine = null;
-let pendingLogin = '10.10.10.99'; // SBC IP
-let pendingUsername = '';
-let awaitingUsername = false;
-let awaitingPassword = false;
-let commandBuffer = '';
-let commandHistory = [];
-let historyIndex = -1;
-let currentPath = [];
-
-// --- Terminal Setup ---
 const term = new Terminal({
   theme: {
     background: '#001100',
@@ -41,27 +29,22 @@ window.addEventListener('resize', () => {
   fitAddon.fit();
 });
 
-// --- Filesystem Setup ---
+// --- Terminal Setup Complete ---
+
 const fileSystem = filesystem;
+let currentMachine = null;
+let pendingLogin = '10.10.10.99';
+let pendingUsername = '';
+let awaitingUsername = false;
+let awaitingPassword = false;
+let commandBuffer = '';
+let commandHistory = [];
+let historyIndex = -1;
+let currentPath = [];
 
-// --- Prompt ---
-function prompt() {
-  if (currentMachine) {
-    const machine = systems.find(sys => sys.ip === currentMachine);
-    term.write(`\r\n${machine ? machine.hostname : 'machine'}:/${currentPath.join('/')}$ `);
-  } else {
-    term.write(`\r\nuser@Network:/$ `);
-  }
-}
-
-// --- Get Directory ---
+// --- Filesystem Functions ---
 function getCurrentDir() {
   let dir = fileSystem['/'];
-
-  if (currentMachine) {
-    dir = dir.contents[currentMachine];
-  }
-
   for (const part of currentPath) {
     if (dir.type !== 'dir' || !dir.contents[part]) {
       return null;
@@ -70,7 +53,6 @@ function getCurrentDir() {
   }
   return dir;
 }
-
 
 function getDirFromPath(base, pathArray) {
   let current = base;
@@ -81,14 +63,12 @@ function getDirFromPath(base, pathArray) {
   return current;
 }
 
-// --- Clear Current Input ---
-function clearCurrentInput() {
-  for (let i = 0; i < commandBuffer.length; i++) {
-    term.write('\b \b');
-  }
+// --- Prompt ---
+function prompt() {
+  term.write(`\r\nuser@SBC_1:/${currentPath.join('/')}$ `);
 }
 
-// --- Run Command ---
+// --- Command Runner ---
 function runCommand(input) {
   input = input.trim();
   const args = input.split(' ').filter(arg => arg.length > 0);
@@ -126,46 +106,6 @@ function runCommand(input) {
     }
   }
 
-  else if (command === 'cd') {
-    if (!currentMachine) {
-      term.writeln('You must be connected to a machine to use cd.');
-    } else {
-      if (args.length < 2) {
-        term.writeln('Usage: cd <directory>');
-      } else {
-        const machineNode = fileSystem['/']['contents'][currentMachine];
-        const pathNode = getDirFromPath(machineNode, currentPath);
-
-        if (args[1] === '/') {
-          currentPath = [];
-        } else if (args[1] === '..') {
-          if (currentPath.length > 0) currentPath.pop();
-        } else if (pathNode && pathNode.contents && pathNode.contents[args[1]] && pathNode.contents[args[1]].type === 'dir') {
-          currentPath.push(args[1]);
-        } else {
-          term.writeln('No such directory: ' + args[1]);
-        }
-      }
-    }
-  }
-
-  else if (command === 'cat') {
-    if (!currentMachine) {
-      term.writeln('You must be connected to a machine to use cat.');
-    } else if (args.length < 2) {
-      term.writeln('Usage: cat <file>');
-    } else {
-      const machineNode = fileSystem['/']['contents'][currentMachine];
-      const pathNode = getDirFromPath(machineNode, currentPath);
-
-      if (pathNode && pathNode.contents && pathNode.contents[args[1]] && pathNode.contents[args[1]].type === 'file') {
-        term.writeln(pathNode.contents[args[1]].content);
-      } else {
-        term.writeln('No such file: ' + args[1]);
-      }
-    }
-  }
-
   else if (command === 'nmap') {
     if (args.length < 2) {
       term.writeln('Usage: nmap <subnet>');
@@ -181,22 +121,6 @@ function runCommand(input) {
       });
       if (!found) {
         term.writeln('No hosts found.');
-      }
-    }
-    prompt();
-    return;
-  }
-
-  else if (command === 'ping') {
-    if (args.length < 2) {
-      term.writeln('Usage: ping <ip>');
-    } else {
-      const targetIp = args[1];
-      const target = systems.find(system => system.ip === targetIp);
-      if (target) {
-        term.writeln(`Pinging ${targetIp} (${target.hostname})... Success!`);
-      } else {
-        term.writeln(`Pinging ${targetIp}... No response.`);
       }
     }
     prompt();
@@ -221,6 +145,22 @@ function runCommand(input) {
     }
   }
 
+  else if (command === 'ping') {
+    if (args.length < 2) {
+      term.writeln('Usage: ping <ip>');
+    } else {
+      const targetIp = args[1];
+      const target = systems.find(system => system.ip === targetIp);
+      if (target) {
+        term.writeln(`Pinging ${targetIp} (${target.hostname})... Success!`);
+      } else {
+        term.writeln(`Pinging ${targetIp}... No response.`);
+      }
+    }
+    prompt();
+    return;
+  }
+
   else if (command === 'clear') {
     term.clear();
     prompt();
@@ -228,31 +168,20 @@ function runCommand(input) {
   }
 
   else if (command === 'ifconfig') {
-    if (!currentMachine) {
-      term.writeln('Not connected to any device.');
-    } else {
-      const machine = systems.find(sys => sys.ip === currentMachine);
-      if (machine) {
-        term.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
-        term.writeln(`        inet ${machine.ip}  netmask 255.255.255.0  broadcast ${machine.ip.substring(0, machine.ip.lastIndexOf('.') + 1)}255`);
-        term.writeln('        ether b8:27:eb:ad:2b:0e  txqueuelen 1000  (Ethernet)');
-        term.writeln('        RX packets 12345  bytes 6789012 (6.7 MB)');
-        term.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
-        term.writeln('        inet6 fe80::ba27:ebff:fead:2b0e  prefixlen 64  scopeid 0x20<link>');
-      } else {
-        term.writeln('Unable to retrieve network configuration.');
-      }
-    }
+    term.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
+    term.writeln('        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255');
+    term.writeln('        ether b8:27:eb:ad:2b:0e  txqueuelen 1000  (Ethernet)');
+    term.writeln('        RX packets 12345  bytes 6789012 (6.7 MB)');
+    term.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
+    term.writeln('        inet6 fe80::ba27:ebff:fead:2b0e  prefixlen 64  scopeid 0x20<link>');
     prompt();
     return;
   }
-  
 
   else if (command === 'help') {
     term.writeln('Available Commands:');
     term.writeln('  ls           - List directory contents');
     term.writeln('  cd <dir>     - Change directory');
-    term.writeln('  cd ..        - Go up a directory');
     term.writeln('  cat <file>   - View file contents');
     term.writeln('  clear        - Clear the screen');
     term.writeln('  ifconfig     - View network settings');
@@ -268,97 +197,15 @@ function runCommand(input) {
   prompt();
 }
 
-// --- Input Handling ---
-term.onKey(e => {
-  const { key, domEvent } = e;
-  const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
-
-  if (domEvent.key === 'Enter') {
-    if (awaitingUsername) {
-      pendingUsername = commandBuffer.trim();
-      commandBuffer = '';
-      awaitingUsername = false;
-      awaitingPassword = true;
-      term.write('\r\nPassword: ');
-    } else if (awaitingPassword) {
-      const target = systems.find(sys => sys.ip === pendingLogin);
-      if (target && pendingUsername === target.username && commandBuffer === target.password) {
-        term.writeln('\r\nWelcome to ' + target.hostname + '!');
-        currentMachine = pendingLogin;
-        currentPath = [];
-        awaitingPassword = false;
-        pendingUsername = '';
-        commandBuffer = '';
-        prompt(); // ✅ show shell prompt after successful login
-      } else {
-        term.writeln('\r\nAccess Denied.');
-        pendingUsername = '';
-        pendingLogin = '10.10.10.99'; // Reset to default SBC
-        awaitingPassword = false;
-        commandBuffer = '';
-        // 🔥 Immediately re-prompt for login again
-        term.write('\r\nUsername: ');
-        awaitingUsername = true;
-      }
-    }
-     else {
-      if (commandBuffer.trim() !== '') {
-        commandHistory.push(commandBuffer);
-        historyIndex = commandHistory.length;
-      }
-      term.write('\r\n');
-      runCommand(commandBuffer);
-      commandBuffer = '';
-    }
-  }
-
-  else if (domEvent.key === 'Backspace') {
-    if (commandBuffer.length > 0) {
-      commandBuffer = commandBuffer.slice(0, -1);
-      term.write('\b \b');
-    }
-  }
-
-  else if (domEvent.key === 'ArrowUp') {
-    if (historyIndex > 0) {
-      historyIndex--;
-      clearCurrentInput();
-      commandBuffer = commandHistory[historyIndex] || '';
-      term.write(commandBuffer);
-    }
-  }
-
-  else if (domEvent.key === 'ArrowDown') {
-    if (historyIndex < commandHistory.length - 1) {
-      historyIndex++;
-      clearCurrentInput();
-      commandBuffer = commandHistory[historyIndex] || '';
-      term.write(commandBuffer);
-    } else {
-      historyIndex = commandHistory.length;
-      clearCurrentInput();
-      commandBuffer = '';
-    }
-  }
-
-  else if (printable) {
-    if (awaitingPassword) {
-      commandBuffer += key;
-      term.write('*');
-    } else {
-      commandBuffer += key;
-      term.write(key);
-    }
-  }
-});
-
-// --- Boot Sequence ---
+// --- Output Intro ---
 async function outputIntro() {
-  await delay(1500);
+  await delay(1500); // Startup pause
+
   for (const line of narrative.intro) {
     await typeLine(line);
     await delay(300);
   }
+
   term.writeln("\r\nConnecting to SBC_1...");
   term.write("\r\nUsername: ");
   awaitingUsername = true;
@@ -368,24 +215,39 @@ async function typeLine(line) {
   for (const char of line) {
     term.write(char);
     await delay(20);
-    if (Math.random() < 0.03) tinyFlicker();
   }
   term.write('\r\n');
-}
-
-function tinyFlicker() {
-  const terminal = document.getElementById('terminal');
-  if (!terminal) return;
-  terminal.style.opacity = '0.8';
-  setTimeout(() => {
-    terminal.style.opacity = '1';
-  }, 50);
 }
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function clearCurrentInput() {
+  for (let i = 0; i < commandBuffer.length; i++) {
+    term.write('\b \b');
+  }
+}
+
+// --- Boot the Intro ---
 outputIntro();
 
+// --- Safe Event Attachments ---
+window.addEventListener('load', () => {
+  const menuButton = document.getElementById('menuButton');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const closeMenu = document.getElementById('closeMenu');
 
+  if (menuButton && menuOverlay && closeMenu) {
+    menuButton.addEventListener('click', () => {
+      menuOverlay.style.display = 'flex';
+      menuButton.style.display = 'none'; // <-- ADD THIS
+    });
+    
+    closeMenu.addEventListener('click', () => {
+      menuOverlay.style.display = 'none';
+      menuButton.style.display = 'block'; // <-- ADD THIS
+    });
+    
+  }
+});
