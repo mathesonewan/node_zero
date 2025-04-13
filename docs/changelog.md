@@ -1,4 +1,4 @@
-ready# Changelog
+# Changelog
 
 ## [Initial Brody Commit] - 2024-05-17
 
@@ -22,4 +22,25 @@ ready# Changelog
 
 **Project is fully stable at this checkpoint.  
 Ready for feature expansion.**
+
+---
+
+## [Structural Modularization Staging] - 2024-05-18
+
+### Added
+- Created `stateManager.js` for centralized state handling (currently commented, staged for activation).
+- Created `inputManager.js` for dedicated terminal input handling (currently commented, staged for activation).
+
+### Changed
+- Refactored login and filesystem logic to prepare for cleaner module boundaries.
+- Separated core system states from command execution and login handling.
+- Identified clear path for incremental activation and stability testing.
+
+### Known Issues
+- `stateManager.js` and `inputManager.js` are present but not yet active.
+- CD navigation on SBC_1 pending final confirmation.
+- Menu settings (audio, flicker level, theme color) still not wired.
+
+**Project remains stable.  
+Staged modular upgrades ready for next activation phase.**
 

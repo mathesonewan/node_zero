@@ -15,7 +15,7 @@
 
 ---
 
-## 🖥️ Terminal Behavior
+## 💻 Terminal Behavior
 
 | Feature | Status | Notes |
 |:--------|:-------|:------|
@@ -27,7 +27,7 @@
 
 ---
 
-## 🧠 System Variables
+## 🧐 System Variables
 
 | Variable | Purpose |
 |:---------|:--------|
@@ -92,7 +92,7 @@
 
 ---
 
-## 🛜 Network Simulation
+## 📻 Network Simulation
 
 | Feature | Status | Notes |
 |:--------|:-------|:------|
@@ -103,7 +103,7 @@
 
 ---
 
-## 🛑 Known Issues
+## ⛔️ Known Issues
 
 | Issue | Impact | Notes |
 |:------|:------|:------|
@@ -118,4 +118,23 @@
 - Project is now stable.
 - Visuals and Terminal behavior fully matched to early design goals.
 - Ready for new feature expansions (e.g., audio, real settings, ASCII animations).
+
+---
+
+# 📋 Additional Updates (2024-05-18)
+
+## 📦 Structural Modularization & Preparation
+
+| Change | Status | Notes |
+|:-------|:-------|:------|
+| Created `stateManager.js` | ✅ | Centralized state management module (staged, inactive) |
+| Created `inputManager.js` | ✅ | Dedicated terminal input handler (staged, inactive) |
+| Refactored login and filesystem logic | ✅ | Prepping for cleaner module boundaries |
+| Separated local vs remote machine logic | ✅ | Clearer handling for SBC_1 boot system |
+
+- `stateManager.js` will eliminate circular dependencies.
+- `inputManager.js` will isolate and cleanly route terminal key input.
+- Staged for incremental activation and testing.
+
+**Project remains stable. Next step is modular activation phase.**
 
