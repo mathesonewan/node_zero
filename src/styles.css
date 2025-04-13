@@ -1,176 +1,27 @@
-/* --- Base layout --- */
+/* --- Base Layout --- */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  background: #001100;
+  background: #001100; /* CRT green background */
   overflow: hidden;
 }
 
-/* Layout container */
-#layout {
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* Terminal */
+/* --- Terminal Styling --- */
 #terminal {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% - 100px); /* Reserve 100px for menu button */
+  width: 100%;
   height: 100%;
   animation: flicker 8s infinite;
 }
 
-
-/* --- CRT Effects (Scanline, Noise, Burn-in) --- */
-#scanline, #burnin, #noise, #noise2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
+/* --- Terminal Text Glow --- */
+#terminal .xterm-screen {
+  text-shadow: 0 0 2px #00FF00, 0 0 6px #00FF00;
 }
 
-#scanline {
-  height: 2px;
-  background: rgba(0, 255, 0, 0.08);
-  box-shadow: 0 0 25px 10px rgba(0, 255, 0, 0.15);
-  animation: scanline-move 8s linear infinite;
-  z-index: 10;
-}
-
-#burnin {
-  background: url('https://www.transparenttextures.com/patterns/asfalt-light.png') repeat;
-  opacity: 0.02;
-  pointer-events: none;
-  z-index: 12;
-  mix-blend-mode: overlay;
-}
-
-#noise, #noise2 {
-  background: url('https://www.transparenttextures.com/patterns/noisy.png');
-  opacity: 0.3;
-  z-index: 15;
-}
-
-#noise2 {
-  animation: noiseMove 2s infinite linear;
-}
-
-/* --- Animations --- */
-@keyframes flicker {
-  0%, 49%, 51%, 100% { opacity: 1; }
-  50% { opacity: 0.65; }
-}
-
-@keyframes scanline-move {
-  0% { top: -10%; opacity: 0; }
-  10% { opacity: 1; }
-  50% { top: 50%; opacity: 0.8; }
-  90% { opacity: 1; }
-  100% { top: 110%; opacity: 0; }
-}
-
-@keyframes noiseMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 40px 40px; }
-}
-
-/* Hide xterm scrollbar */
-#terminal .xterm-viewport {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-#terminal .xterm-viewport::-webkit-scrollbar {
-  display: none;
-}
-
-/* --- Menu Button --- */
-#menuButton {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  width: 80px;
-  height: 40px;
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  border: 2px solid #00FF00;
-  cursor: pointer;
-  z-index: 100;
-}
-
-/* --- Menu Overlay --- */
-#menuOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9); /* Dark semi-translucent */
-  display: none; /* Hidden by default */
-  flex-direction: column;
-  z-index: 99;
-}
-
-/* --- Close Button --- */
-#closeMenu {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 24px;
-  border: none;
-  cursor: pointer;
-}
-
-/* --- Menu Settings Layout --- */
-.menuSetting {
-  margin: 20px;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-}
-
-.menuSetting label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.menuSetting input[type="number"],
-.menuSetting select {
-  width: 120px;
-  background: #001100;
-  color: #00FF00;
-  border: 1px solid #00FF00;
-  font-family: 'Courier New', monospace;
-  padding: 5px;
-}
-
-.menuSetting input[type="checkbox"] {
-  transform: scale(1.5);
-  margin-top: 5px;
-}
-
-.menuSetting button {
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  border: 1px solid #00FF00;
-  padding: 5px 10px;
-  margin-left: 10px;
-  cursor: pointer;
-}
-
+/* --- Scanline Effect --- */
 #scanline {
   position: absolute;
   top: -10%;
@@ -183,12 +34,114 @@ html, body {
   opacity: 0;
   z-index: 10;
   pointer-events: none;
-  animation: scanline-move 8s infinite; /* KEEP THIS! */
+  animation: scanline-move 8s linear infinite;
 }
-/* --- Terminal Text Glow --- */
-#terminal .xterm-screen {
-  text-shadow: 
-    0 0 2px #00FF00,
-    0 0 4px #00FF00,
-    0 0 6px #00FF00;
+
+/* --- Noise Layer 1 (Static) --- */
+#noise {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/noisy.png');
+  opacity: 0.3; /* Strong noise */
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* --- Noise Layer 2 (Moving) --- */
+#noise2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/noisy.png');
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 16;
+  animation: noiseMove 5s infinite linear;
+}
+
+/* --- Flicker Animation --- */
+@keyframes flicker {
+  0%, 49%, 51%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+/* --- Scanline Move Animation --- */
+@keyframes scanline-move {
+  0% { top: -10%; opacity: 0; }
+  10% { opacity: 1; }
+  50% { top: 50%; opacity: 0.8; }
+  90% { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
+}
+
+/* --- Noise Movement Animation --- */
+@keyframes noiseMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 10px 10px; }
+}
+
+/* --- Menu Button --- */
+#menuButton {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  color: #00FF00;
+  border: 1px solid #00FF00;
+  padding: 10px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 200;
+}
+
+/* --- Menu Overlay --- */
+#menuOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  color: #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  z-index: 199;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* --- Close Menu Button --- */
+#closeMenu {
+  background: transparent;
+  color: #00FF00;
+  border: 1px solid #00FF00;
+  align-self: flex-end;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* --- Menu Settings Layout --- */
+.menuSetting {
+  margin-top: 20px;
+}
+
+/* --- Hide xterm.js Scrollbar --- */
+#terminal .xterm-viewport {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
+}
+
+#terminal .xterm-viewport::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
