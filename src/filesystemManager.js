@@ -1,5 +1,5 @@
 import { term } from './terminalHandler.js';
-import { currentUsername, currentHostname, currentPath} from './loginManager.js';
+import { currentUsername, currentHostname, currentPath } from './loginManager.js';
 import systems from './systems.js';
 
 export let fileSystem = {};
@@ -35,7 +35,7 @@ export function runCommand(input) {
   }
 
   else if (command === 'cd') {
-    if (!currentMachine) {
+    if (currentHostname !== 'SBC_1' && !currentMachine) {
       term.writeln('You must be connected to a machine to use cd.');
     } else {
       if (args.length < 2) {
@@ -51,6 +51,8 @@ export function runCommand(input) {
       }
     }
   }
+  
+  
 
   else if (command === 'cat') {
     if (!currentMachine) {
@@ -139,7 +141,16 @@ export function runCommand(input) {
 }
 
 function getCurrentDir() {
-  if (!currentMachine) return fileSystem['/'];
+  if (!currentMachine || currentMachine === 'SBC_1') {
+    // If local boot system (SBC_1), treat root `/` normally
+    let dir = fileSystem['/'];
+    for (const part of currentPath) {
+      if (!dir.contents || !dir.contents[part]) return null;
+      dir = dir.contents[part];
+    }
+    return dir;
+  }
+  // Normal remote machine filesystem
   let dir = fileSystem['/']['contents'][currentMachine];
   for (const part of currentPath) {
     if (!dir.contents || !dir.contents[part]) return null;

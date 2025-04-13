@@ -10,16 +10,15 @@ let cursorPosition = 0;
 let commandHistory = [];
 let historyIndex = -1;
 
-let currentMachine = null;
+export let currentMachine = null;
 export let currentUsername = '';
 export let currentHostname = '';
 export let pendingLogin = '10.10.10.99';
 export let pendingUsername = '';
 export let awaitingUsername = false;
 export let awaitingPassword = false;
-export let currentPath = [];    // <-- ADDED
+export let currentPath = [];
 export { commandBuffer, cursorPosition };
-
 
 export async function initLogin(termInstance, refreshLineInstance) {
   terminal = termInstance;
@@ -43,8 +42,8 @@ async function typeNarrativeLine(line) {
   for (const char of line) {
     terminal.write(char);
     if (getTypingDelay() > 0) {
-        await delay(getTypingDelay());
-      }
+      await delay(getTypingDelay());
+    }
   }
   terminal.write('\r\n');
 }
@@ -71,38 +70,35 @@ export function handleKeyInput(e) {
       if (refreshLineFunc) {
         refreshLineFunc('password', commandBuffer, currentUsername, currentHostname, currentPath);
       }
-    } else if (awaitingPassword) {
+    }
+    else if (awaitingPassword) {
       const target = systems.find(sys => sys.ip === pendingLogin);
 
       if (target && pendingUsername === target.username && commandBuffer === target.password) {
         terminal.writeln('\r\nWelcome to ' + target.hostname + '!');
         currentUsername = pendingUsername;
         currentHostname = target.hostname.replace('.local', '');
-        currentMachine = pendingLogin;
-        pendingUsername = '';
-        pendingLogin = '10.10.10.99';
+        currentMachine = "SBC_1"; // Force set currentMachine to SBC_1 after login
+        currentPath = [];
         awaitingPassword = false;
-        commandBuffer = '';
-        cursorPosition = 0;
-
-        if (refreshLineFunc) {
-          refreshLineFunc('shell', commandBuffer, currentUsername, currentHostname, currentPath);
-        }
       } else {
         terminal.writeln('\r\nAccess Denied.');
-        pendingUsername = '';
-        pendingLogin = '10.10.10.99';
         awaitingPassword = false;
         awaitingUsername = true;
-        commandBuffer = '';
-        cursorPosition = 0;
         terminal.writeln('\r\nReturning to login...');
-
-        if (refreshLineFunc) {
-          refreshLineFunc('username', commandBuffer, currentUsername, currentHostname, currentPath);
-        }
       }
-    } else {
+
+      pendingUsername = '';
+      pendingLogin = '10.10.10.99';
+      commandBuffer = '';
+      cursorPosition = 0;
+
+      if (refreshLineFunc) {
+        const promptMode = awaitingUsername ? 'username' : 'shell';
+        refreshLineFunc(promptMode, commandBuffer, currentUsername, currentHostname, currentPath);
+      }
+    }
+    else {
       if (commandBuffer.trim() !== '') {
         commandHistory.push(commandBuffer);
       }
@@ -115,20 +111,16 @@ export function handleKeyInput(e) {
         refreshLineFunc('shell', commandBuffer, currentUsername, currentHostname, currentPath);
       }
     }
-  } 
+  }
   else if (printable) {
     domEvent.preventDefault();
     commandBuffer = commandBuffer.slice(0, cursorPosition) + key + commandBuffer.slice(cursorPosition);
     cursorPosition++;
 
     if (refreshLineFunc) {
-      if (awaitingUsername) {
-        refreshLineFunc('username', commandBuffer, currentUsername, currentHostname, currentPath);
-      } else if (awaitingPassword) {
-        refreshLineFunc('password', commandBuffer, currentUsername, currentHostname, currentPath);
-      } else {
-        refreshLineFunc('shell', commandBuffer, currentUsername, currentHostname, currentPath);
-      }
+      const promptMode = awaitingUsername ? 'username' :
+                         awaitingPassword ? 'password' : 'shell';
+      refreshLineFunc(promptMode, commandBuffer, currentUsername, currentHostname, currentPath);
     }
   }
   else if (domEvent.key === 'Backspace') {
@@ -136,7 +128,8 @@ export function handleKeyInput(e) {
     if (cursorPosition > 0) {
       commandBuffer = commandBuffer.slice(0, cursorPosition - 1) + commandBuffer.slice(cursorPosition);
       cursorPosition--;
-
+  
+      // Immediately refresh the line after deletion
       if (refreshLineFunc) {
         if (awaitingUsername) {
           refreshLineFunc('username', commandBuffer, currentUsername, currentHostname, currentPath);
@@ -148,4 +141,4 @@ export function handleKeyInput(e) {
       }
     }
   }
-}
+}  
