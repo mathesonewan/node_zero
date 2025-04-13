@@ -237,6 +237,13 @@ window.addEventListener('load', () => {
   const menuButton = document.getElementById('menuButton');
   const menuOverlay = document.getElementById('menuOverlay');
   const closeMenu = document.getElementById('closeMenu');
+  const audioToggle = document.getElementById('audioToggle');
+  const textSpeedInput = document.getElementById('textSpeed');
+  const instantTextButton = document.getElementById('instantText');
+  const skipBootToggle = document.getElementById('skipBoot');
+  const flickerLevelSelect = document.getElementById('flickerLevel');
+  const scanlinesToggle = document.getElementById('scanlinesToggle');
+  const themeSelect = document.getElementById('themeSelect');
 
   if (menuButton && menuOverlay && closeMenu) {
     menuButton.addEventListener('click', () => {
@@ -248,6 +255,48 @@ window.addEventListener('load', () => {
       menuOverlay.style.display = 'none';
       menuButton.style.display = 'block'; // <-- ADD THIS
     });
-    
+    // Just placeholder logs for now
+if (audioToggle) {
+  audioToggle.addEventListener('change', () => {
+    console.log("Audio toggle:", audioToggle.checked);
+  });
+}
+
+if (textSpeedInput) {
+  textSpeedInput.addEventListener('input', () => {
+    console.log("Text Speed:", textSpeedInput.value);
+  });
+}
+
+if (instantTextButton) {
+  instantTextButton.addEventListener('click', () => {
+    console.log("Instant text mode activated.");
+    textSpeedInput.value = 0;
+  });
+}
+
+if (skipBootToggle) {
+  skipBootToggle.addEventListener('change', () => {
+    console.log("Skip boot:", skipBootToggle.checked);
+  });
+}
+
+if (flickerLevelSelect) {
+  flickerLevelSelect.addEventListener('change', () => {
+    console.log("Flicker level:", flickerLevelSelect.value);
+  });
+}
+
+if (scanlinesToggle) {
+  scanlinesToggle.addEventListener('change', () => {
+    console.log("Scanlines toggle:", scanlinesToggle.checked);
+  });
+}
+
+if (themeSelect) {
+  themeSelect.addEventListener('change', () => {
+    console.log("Theme selected:", themeSelect.value);
+  });
+}
   }
 });

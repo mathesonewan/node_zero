@@ -13,21 +13,62 @@
 </head>
 <body>
   <div id="layout">
-  <div id="terminal"></div>
-  <div id="scanline"></div>
-  <div id="burnin"></div>
-  <div id="noise"></div>
-  <div id="noise2"></div>
+    <div id="terminal"></div>
+    <div id="scanline"></div>
+    <div id="burnin"></div>
+    <div id="noise"></div>
+    <div id="noise2"></div>
 
-<!-- Menu Button -->
-<button id="menuButton">MENU</button>
+    <!-- Menu Button -->
+    <button id="menuButton">MENU</button>
 
-<!-- Menu Overlay -->
-<div id="menuOverlay">
-  <button id="closeMenu">X</button>
-  <!-- (You’ll add more settings inside here later) -->
-</div>
+    <!-- Menu Overlay -->
+    <div id="menuOverlay">
+      <button id="closeMenu">X</button>
 
+      <!-- Settings start here -->
+      <div class="menuSetting">
+        <label for="audioToggle">Audio:</label>
+        <input type="checkbox" id="audioToggle">
+      </div>
+
+      <div class="menuSetting">
+        <label for="textSpeed">Text Speed (ms):</label>
+        <input type="number" id="textSpeed" min="0" max="100" step="5">
+        <button id="instantText">Instant</button>
+      </div>
+
+      <div class="menuSetting">
+        <label for="skipBoot">Skip Boot Sequence:</label>
+        <input type="checkbox" id="skipBoot">
+      </div>
+
+      <div class="menuSetting">
+        <label for="flickerLevel">CRT Flicker Intensity:</label>
+        <select id="flickerLevel">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+
+      <div class="menuSetting">
+        <label for="scanlinesToggle">Scanlines:</label>
+        <input type="checkbox" id="scanlinesToggle" checked>
+      </div>
+
+      <div class="menuSetting">
+        <label for="themeSelect">Theme Color:</label>
+        <select id="themeSelect">
+          <option value="green" selected>Hack Green</option>
+          <option value="blue">Ice Blue</option>
+        </select>
+      </div>
+      <!-- Settings end here -->
+
+    </div> <!-- End of menuOverlay -->
+
+  </div> <!-- End of layout -->
 
   <script type="module" src="./main.js"></script> 
 </body>

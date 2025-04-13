@@ -130,3 +130,41 @@ html, body {
   border: none;
   cursor: pointer;
 }
+
+/* --- Menu Settings Layout --- */
+.menuSetting {
+  margin: 20px;
+  color: #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+}
+
+.menuSetting label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.menuSetting input[type="number"],
+.menuSetting select {
+  width: 120px;
+  background: #001100;
+  color: #00FF00;
+  border: 1px solid #00FF00;
+  font-family: 'Courier New', monospace;
+  padding: 5px;
+}
+
+.menuSetting input[type="checkbox"] {
+  transform: scale(1.5);
+  margin-top: 5px;
+}
+
+.menuSetting button {
+  background: transparent;
+  color: #00FF00;
+  font-family: 'Courier New', monospace;
+  border: 1px solid #00FF00;
+  padding: 5px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
