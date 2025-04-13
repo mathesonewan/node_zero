@@ -371,4 +371,59 @@ window.addEventListener('load', () => {
       menuButton.style.display = 'block';
     });
   }
+  // --- Text Speed Control Buttons ---
+const slowButton = document.getElementById('slowTextSpeed');
+const fastButton = document.getElementById('fastTextSpeed');
+const instantButton = document.getElementById('instantTextSpeed');
+
+if (slowButton && fastButton && instantButton) {
+  slowButton.addEventListener('click', () => {
+    typingDelay = 40; // Slower typing
+  });
+
+  fastButton.addEventListener('click', () => {
+    typingDelay = 10; // Faster typing
+  });
+
+  instantButton.addEventListener('click', () => {
+    typingDelay = 0; // Instant typing
+  });
+}
+
+// --- Flicker Intensity Control Buttons ---
+const flickerLow = document.getElementById('flickerLow');
+const flickerMedium = document.getElementById('flickerMedium');
+const flickerHigh = document.getElementById('flickerHigh');
+
+if (flickerLow && flickerMedium && flickerHigh) {
+  flickerLow.addEventListener('click', () => {
+    document.getElementById('terminal').style.animationDuration = '12s'; // Low flicker
+  });
+
+  flickerMedium.addEventListener('click', () => {
+    document.getElementById('terminal').style.animationDuration = '8s'; // Medium flicker
+  });
+
+  flickerHigh.addEventListener('click', () => {
+    document.getElementById('terminal').style.animationDuration = '4s'; // High flicker
+  });
+}
+
+// --- Theme Color Control Buttons ---
+const themeGreen = document.getElementById('themeGreen');
+const themeBlue = document.getElementById('themeBlue');
+
+if (themeGreen && themeBlue) {
+  themeGreen.addEventListener('click', () => {
+    document.getElementById('terminal').style.backgroundColor = '#001100';
+    document.getElementById('terminal').style.color = '#00FF00';
+  });
+
+  themeBlue.addEventListener('click', () => {
+    document.getElementById('terminal').style.backgroundColor = '#001122';
+    document.getElementById('terminal').style.color = '#00FFFF';
+  });
+}
+
+
 });
