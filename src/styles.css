@@ -45,9 +45,11 @@ html, body {
 }
 
 #burnin {
-  background: none;
-  opacity: 0.03;
+  background: url('https://www.transparenttextures.com/patterns/asfalt-light.png') repeat;
+  opacity: 0.02;
+  pointer-events: none;
   z-index: 12;
+  mix-blend-mode: overlay;
 }
 
 #noise, #noise2 {
