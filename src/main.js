@@ -33,6 +33,8 @@ window.addEventListener('resize', () => {
 // --- System Variables ---
 const fileSystem = filesystem;
 let currentMachine = null;
+let currentUsername = '';
+let currentHostname = '';
 let pendingLogin = '10.10.10.99';
 let pendingUsername = '';
 let awaitingUsername = false;
@@ -64,7 +66,7 @@ function getDirFromPath(base, pathArray) {
 
 // --- Prompt ---
 function prompt() {
-  term.write(`\r\nuser@SBC_1:/${currentPath.join('/')}$ `);
+  term.write(`\r\n${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ `);
 }
 
 // --- Command Runner ---
@@ -267,6 +269,9 @@ term.onKey(e => {
       const target = systems.find(sys => sys.ip === pendingLogin);
       if (target && pendingUsername === target.username && commandBuffer === target.password) {
         term.writeln('\r\nWelcome to ' + target.hostname + '!');
+        currentUsername = pendingUsername;
+        const fullHost = target.hostname || 'unknown.local';
+        currentHostname = fullHost.replace('.local', '');
         currentMachine = pendingLogin;
         currentPath = [];
       } else {
@@ -329,7 +334,7 @@ term.onKey(e => {
   }
 });
 
-// --- Scanline Randomized Movement (Reinjected) ---
+// --- Scanline Randomized Movement ---
 const scanline = document.getElementById('scanline');
 
 function randomizeScanlineTiming() {
