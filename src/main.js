@@ -43,6 +43,8 @@ let commandBuffer = '';
 let commandHistory = [];
 let historyIndex = -1;
 let currentPath = [];
+let typingDelay = 20; // Default typing speed (ms per character)
+
 
 // --- Filesystem Functions ---
 function getCurrentDir() {
@@ -234,7 +236,7 @@ async function outputIntro() {
 async function typeLine(line) {
   for (const char of line) {
     term.write(char);
-    await delay(20);
+    await delay(typingDelay);
   }
   term.write('\r\n');
 }

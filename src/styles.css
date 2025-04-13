@@ -145,3 +145,47 @@ html, body {
 #terminal .xterm-viewport::-webkit-scrollbar {
   display: none; /* Chrome/Safari */
 }
+/* --- Menu Checkbox Customization --- */
+#menuOverlay input[type="checkbox"] {
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid #00FF00;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+#menuOverlay input[type="checkbox"]:checked {
+  background-color: #00FF00;
+}
+
+/* --- Menu Select Dropdown Customization --- */
+#menuOverlay select {
+  background: transparent;
+  color: #00FF00;
+  border: 2px solid #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+/* --- Menu Button Customization (Overrides) --- */
+#menuOverlay button, #menuOverlay select, #menuOverlay input[type="number"], #menuOverlay input[type="button"] {
+  background: transparent;
+  color: #00FF00;
+  border: 2px solid #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+/* --- Menu Button Hover Effect --- */
+#menuOverlay button:hover,
+#menuButton:hover {
+  background-color: #00FF00;
+  color: #001100;
+  box-shadow: 0 0 8px #00FF00;
+}
