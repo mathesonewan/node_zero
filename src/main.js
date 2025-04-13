@@ -227,7 +227,7 @@ async function outputIntro() {
   await delay(1500); // Startup pause
 
   for (const line of narrative.intro) {
-    await typeLine(line);
+    await typeNarrativeLine(line);
     await delay(300);
   }
 
@@ -236,17 +236,20 @@ async function outputIntro() {
   awaitingUsername = true;
 }
 
-async function typeLine(line) {
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function typeNarrativeLine(line) {
   for (const char of line) {
     term.write(char);
-    await delay(typingDelay);
+    if (typingDelay > 0) {
+      await delay(typingDelay);
+    }
   }
   term.write('\r\n');
 }
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 function clearCurrentInput() {
   for (let i = 0; i < commandBuffer.length; i++) {
@@ -445,9 +448,9 @@ window.addEventListener('load', () => {
     });
   }
   // --- Text Speed Control Buttons ---
-const slowButton = document.getElementById('slowTextSpeed');
-const fastButton = document.getElementById('fastTextSpeed');
-const instantButton = document.getElementById('instantTextSpeed');
+const slowButton = document.getElementById('slowNarravtiveSpeed');
+const fastButton = document.getElementById('fastNarrativeSpeed');
+const instantButton = document.getElementById('instantNarrativeSpeed');
 
 if (slowButton && fastButton && instantButton) {
   slowButton.addEventListener('click', () => {
