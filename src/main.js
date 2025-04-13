@@ -388,26 +388,4 @@ function delay(ms) {
 
 outputIntro();
 
-// --- Notes Panel ---
-window.addEventListener('load', () => {
-  const menuToggle = document.getElementById('menuToggle');
-  const menuWrapper = document.getElementById('menuWrapper');
-
-  if (menuToggle && menuWrapper) {
-    menuToggle.addEventListener('click', () => {
-      menuWrapper.classList.toggle('open');
-      fitAddon.fit(); // Resize the terminal properly!
-    });
-  }
-
-  const menuArea = document.getElementById('menuArea');
-  menuArea.addEventListener('input', () => {
-    localStorage.setItem('hackerNotes', menuArea.value);
-  });
-
-  if (menuArea) {
-    menuArea.value = localStorage.getItem('hackerNotes') || '';
-  }
-});
-
 

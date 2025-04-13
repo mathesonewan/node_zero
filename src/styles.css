@@ -4,111 +4,53 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
-  background: #001100; /* Dark green CRT background */
+  background: #001100;
   overflow: hidden;
 }
 
-/* --- Terminal styling --- */
+/* Layout container */
+#layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Terminal */
 #terminal {
-  position: absolute;
-  top: 0;
-  left: 0;
+  flex-grow: 1;
+  min-width: 0;
   height: 100%;
-  width: calc(100% - 50px); /* Full width minus menu button */
-  max-width: calc(100% - 50px);
   animation: flicker 8s infinite;
+  background: #001100;
 }
 
-/* Terminal Text Glow */
-#terminal .xterm-screen {
-  text-shadow: 0 0 2px #00FF00, 0 0 6px #00FF00;
-}
-
-/* --- Menu Wrapper --- */
-#menuWrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.8);
-  transition: width 0.4s ease;
-  overflow: hidden;
-  border-left: 2px solid #00FF00;
-}
-
-/* When open, menu expands */
-#menuWrapper.open {
-  width: 300px;
-}
-
-/* --- Menu Toggle Button --- */
-#menuToggle {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  width: 50px;
-  height: 100%;
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  border: none;
-  border-right: 2px solid #00FF00;
-  cursor: pointer;
-}
-
-/* --- Menu Panel --- */
-#menuPanel {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-/* --- Menu Textarea --- */
-#menuArea {
-  flex-grow: 1;
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  background: transparent;
-  color: #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  border: none;
-  resize: none;
-  outline: none;
-}
-
-/* --- Scanline effect --- */
-#scanline {
-  position: absolute;
-  top: -10%;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: rgba(0, 255, 0, 0.08);
-  box-shadow: 0 0 25px 10px rgba(0, 255, 0, 0.15);
-  backdrop-filter: blur(1px);
-  opacity: 0;
-  z-index: 10;
-  pointer-events: none;
-  animation: scanline-move 8s linear infinite;
-}
-
-/* --- Static noise layers --- */
-#noise, #noise2 {
+/* --- CRT Effects (Scanline, Noise, Burn-in) --- */
+#scanline, #burnin, #noise, #noise2 {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  pointer-events: none;
+}
+
+#scanline {
+  height: 2px;
+  background: rgba(0, 255, 0, 0.08);
+  box-shadow: 0 0 25px 10px rgba(0, 255, 0, 0.15);
+  animation: scanline-move 8s linear infinite;
+  z-index: 10;
+}
+
+#burnin {
+  background: none;
+  opacity: 0.03;
+  z-index: 12;
+}
+
+#noise, #noise2 {
   background: url('https://www.transparenttextures.com/patterns/noisy.png');
   opacity: 0.1;
-  pointer-events: none;
   z-index: 15;
 }
 
@@ -116,26 +58,12 @@ html, body {
   animation: noiseMove 5s infinite linear;
 }
 
-/* --- CRT Burn-in Ghost Layer --- */
-#burnin {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: none;
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 12;
-}
-
-/* --- Flicker animation --- */
+/* --- Animations --- */
 @keyframes flicker {
   0%, 49%, 51%, 100% { opacity: 1; }
   50% { opacity: 0.65; }
 }
 
-/* --- Scanline move animation --- */
 @keyframes scanline-move {
   0% { top: -10%; opacity: 0; }
   10% { opacity: 1; }
@@ -144,13 +72,12 @@ html, body {
   100% { top: 110%; opacity: 0; }
 }
 
-/* --- Noise movement animation --- */
 @keyframes noiseMove {
   0% { background-position: 0 0; }
   100% { background-position: 10px 10px; }
 }
 
-/* --- Hide scrollbar in xterm --- */
+/* Hide xterm scrollbar */
 #terminal .xterm-viewport {
   scrollbar-width: none;
   -ms-overflow-style: none;
