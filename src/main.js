@@ -300,3 +300,21 @@ if (themeSelect) {
 }
   }
 });
+
+const scanline = document.getElementById('scanline');
+
+function randomizeScanlineTiming() {
+  const curves = [
+    'cubic-bezier(0.25, 0.1, 0.25, 1.0)', // Ease
+    'cubic-bezier(0.42, 0, 0.58, 1.0)',   // Ease-in-out
+    'cubic-bezier(0.4, 0.0, 1, 1)',       // Ease-out
+    'cubic-bezier(0.0, 0.0, 0.2, 1)',     // Ease-in
+    'cubic-bezier(0.5, 1.5, 0.5, 1)',     // Crazy overshoot
+    'linear'                              // Boring fallback
+  ];
+  const randomCurve = curves[Math.floor(Math.random() * curves.length)];
+  scanline.style.animationTimingFunction = randomCurve;
+}
+
+// Keep changing it every few seconds
+setInterval(randomizeScanlineTiming, 4000);
