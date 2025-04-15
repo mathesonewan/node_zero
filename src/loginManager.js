@@ -4,6 +4,8 @@ import narrative from './narrative.js';
 import { getTypingDelay } from './terminalHandler.js';
 import systems from './systems.js';
 import state from './stateManager.js';
+import { resetSessionState } from './stateManager.js';
+import fsTemplates from './fsTemplates.js';
 
 let refreshLineFunc = null;
 
@@ -62,11 +64,18 @@ export function handleLoginInput() {
     
     if (target && state.pendingUsername === target.username && state.commandBuffer === target.password) {
       state.terminal.writeln('\r\nWelcome to ' + target.hostname + '!');
-      state.currentUser = state.pendingUsername;
-      state.currentMachine = target.hostname.replace('.local', '');
-      state.currentPath = '/';
-      state.loginComplete = true;
-      state.awaitingPassword = false;
+      const machineName = target.hostname.replace('.local', '');
+resetSessionState(state.pendingUsername, machineName);
+
+// Set up the machine's FS if it's a real target
+if (!state.machines[machineName]) {
+  state.machines[machineName] = {
+    fs: structuredClone(fsTemplates.default),
+    users: {
+      [state.pendingUsername]: state.commandBuffer
+    }
+  };
+}
     } else {
       state.terminal.writeln('\r\nAccess Denied.');
       state.awaitingPassword = false;

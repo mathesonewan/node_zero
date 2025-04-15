@@ -131,15 +131,44 @@ export function runCommand(input) {
 }
 
 function getCurrentDir() {
-  let dir = state.machines[state.currentMachine]?.fs['/'];
-  for (const part of state.currentPath) {
-    if (!dir?.contents?.[part]) return null;
-    dir = dir.contents[part];
+  if (!Array.isArray(state.currentPath)) {
+    console.error("DEBUG: currentPath is not an array");
+    return null;
   }
+
+  const machine = state.machines[state.currentMachine];
+  if (!machine) {
+    console.error(`DEBUG: Invalid currentMachine: ${state.currentMachine}`);
+    return null;
+  }
+
+  let dir = machine.fs['/'];
+  for (const part of state.currentPath) {
+    dir = dir?.contents?.[part];
+    if (!dir) {
+      console.error(`DEBUG: Directory not found: ${part}`);
+      return null;
+    }
+  }
+
   return dir;
 }
 
+
+
+
+
+
+
+
+
 function prompt() {
-  const pathStr = state.currentPath.join('/');
-  state.terminal.write(`\r\n${state.currentUser || 'user'}@${state.currentMachine || 'SBC_1'}:/${pathStr}$ `);
+  if (!Array.isArray(state.currentPath)) {
+    console.warn("⚠️ state.currentPath was not an array. Resetting to root.");
+    console.trace();
+    state.currentPath = [];
+  }
+
+  const pathStr = state.currentPath.join('/'); // 👈 this is the missing bit
+  state.terminal.write(`\r\n${state.currentUser || 'user'}@${state.currentMachine || 'localhost'}:/${pathStr}$ `);
 }
