@@ -1,12 +1,10 @@
-import { term } from './terminalHandler.js';
-import { currentUsername, currentHostname, currentPath } from './loginManager.js';
+// filesystemManager.js
+
+import state from './stateManager.js';
 import systems from './systems.js';
 
-export let fileSystem = {};
-export let currentMachine = null;
-
 export function setFileSystem(fs) {
-  fileSystem = fs;
+  state.machines[state.currentMachine].fs = fs;
 }
 
 export function runCommand(input) {
@@ -21,144 +19,127 @@ export function runCommand(input) {
 
   const dir = getCurrentDir();
   if (!dir) {
-    term.writeln('Filesystem error: invalid path');
+    state.terminal.writeln('Filesystem error: invalid path');
     prompt();
     return;
   }
 
-  if (command === 'ls') {
-    if (dir.type === 'dir') {
-      term.writeln(Object.keys(dir.contents).join('    '));
-    } else {
-      term.writeln('Not a directory.');
-    }
-  }
+  switch (command) {
+    case 'ls':
+      if (dir.type === 'dir') {
+        state.terminal.writeln(Object.keys(dir.contents).join('    '));
+      } else {
+        state.terminal.writeln('Not a directory.');
+      }
+      break;
 
-  else if (command === 'cd') {
-    if (currentHostname !== 'SBC_1' && !currentMachine) {
-      term.writeln('You must be connected to a machine to use cd.');
-    } else {
-      if (args.length < 2) {
-        term.writeln('Usage: cd <directory>');
+    case 'cd':
+      if (state.currentMachine !== 'SBC_1' && !state.machines[state.currentMachine]) {
+        state.terminal.writeln('You must be connected to a machine to use cd.');
+      } else if (args.length < 2) {
+        state.terminal.writeln('Usage: cd <directory>');
       } else if (args[1] === '..') {
-        if (currentPath.length > 0) currentPath.pop();
+        if (state.currentPath.length > 0) state.currentPath.pop();
       } else if (args[1] === '/') {
-        currentPath = [];
+        state.currentPath = [];
       } else if (dir.contents && dir.contents[args[1]] && dir.contents[args[1]].type === 'dir') {
-        currentPath.push(args[1]);
+        state.currentPath.push(args[1]);
       } else {
-        term.writeln('No such directory: ' + args[1]);
+        state.terminal.writeln('No such directory: ' + args[1]);
       }
-    }
-  }
-  
-  
+      break;
 
-  else if (command === 'cat') {
-    if (!currentMachine) {
-      term.writeln('You must be connected to a machine to use cat.');
-    } else if (args.length < 2) {
-      term.writeln('Usage: cat <file>');
-    } else {
-      if (dir.contents && dir.contents[args[1]] && dir.contents[args[1]].type === 'file') {
-        term.writeln(dir.contents[args[1]].content);
+    case 'cat':
+      if (!state.currentMachine) {
+        state.terminal.writeln('You must be connected to a machine to use cat.');
+      } else if (args.length < 2) {
+        state.terminal.writeln('Usage: cat <file>');
+      } else if (dir.contents && dir.contents[args[1]] && dir.contents[args[1]].type === 'file') {
+        state.terminal.writeln(dir.contents[args[1]].content);
       } else {
-        term.writeln('No such file: ' + args[1]);
+        state.terminal.writeln('No such file: ' + args[1]);
       }
-    }
-  }
+      break;
 
-  else if (command === 'clear') {
-    term.clear();
-    prompt();
-    return;
-  }
+    case 'clear':
+      state.terminal.clear();
+      prompt();
+      return;
 
-  else if (command === 'nmap') {
-    if (args.length < 2) {
-      term.writeln('Usage: nmap <subnet>');
-    } else {
-      const subnet = args[1].split('/')[0].split('.').slice(0, 3).join('.') + '.';
-      term.writeln(`Starting Nmap scan on ${subnet}0/24`);
-      let found = false;
-      systems.forEach(system => {
-        if (system.ip.startsWith(subnet)) {
-          term.writeln(`Host ${system.ip} (${system.hostname}) is up`);
-          found = true;
+    case 'nmap':
+      if (args.length < 2) {
+        state.terminal.writeln('Usage: nmap <subnet>');
+      } else {
+        const subnet = args[1].split('/')[0].split('.').slice(0, 3).join('.') + '.';
+        state.terminal.writeln(`Starting Nmap scan on ${subnet}0/24`);
+        let found = false;
+        systems.forEach(system => {
+          if (system.ip.startsWith(subnet)) {
+            state.terminal.writeln(`Host ${system.ip} (${system.hostname}) is up`);
+            found = true;
+          }
+        });
+        if (!found) {
+          state.terminal.writeln('No hosts found.');
         }
-      });
-      if (!found) {
-        term.writeln('No hosts found.');
       }
-    }
-  }
+      break;
 
-  else if (command === 'ping') {
-    if (args.length < 2) {
-      term.writeln('Usage: ping <ip>');
-    } else {
-      const targetIp = args[1];
-      const target = systems.find(system => system.ip === targetIp);
-      if (target) {
-        term.writeln(`Pinging ${targetIp} (${target.hostname})... Success!`);
+    case 'ping':
+      if (args.length < 2) {
+        state.terminal.writeln('Usage: ping <ip>');
       } else {
-        term.writeln(`Pinging ${targetIp}... No response.`);
+        const targetIp = args[1];
+        const target = systems.find(system => system.ip === targetIp);
+        if (target) {
+          state.terminal.writeln(`Pinging ${targetIp} (${target.hostname})... Success!`);
+        } else {
+          state.terminal.writeln(`Pinging ${targetIp}... No response.`);
+        }
       }
-    }
-  }
+      break;
 
-  else if (command === 'ifconfig') {
-    term.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
-    term.writeln('        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255');
-    term.writeln('        ether b8:27:eb:ad:2b:0e  txqueuelen 1000  (Ethernet)');
-    term.writeln('        RX packets 12345  bytes 6789012 (6.7 MB)');
-    term.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
-    term.writeln('        inet6 fe80::ba27:ebff:fead:2b0e  prefixlen 64  scopeid 0x20<link>');
-    prompt();
-    return;
-  }
+    case 'ifconfig':
+      state.terminal.writeln('eth0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500');
+      state.terminal.writeln('        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255');
+      state.terminal.writeln('        ether b8:27:eb:ad:2b:0e  txqueuelen 1000  (Ethernet)');
+      state.terminal.writeln('        RX packets 12345  bytes 6789012 (6.7 MB)');
+      state.terminal.writeln('        TX packets 2345  bytes 123456 (123.4 KB)');
+      state.terminal.writeln('        inet6 fe80::ba27:ebff:fead:2b0e  prefixlen 64  scopeid 0x20<link>');
+      prompt();
+      return;
 
-  else if (command === 'help') {
-    term.writeln('Available Commands:');
-    term.writeln('  ls           - List directory contents');
-    term.writeln('  cd <dir>     - Change directory');
-    term.writeln('  cat <file>   - View file contents');
-    term.writeln('  clear        - Clear the screen');
-    term.writeln('  ssh user@ip  - Connect to a machine');
-    term.writeln('  nmap subnet  - Scan network for machines');
-    term.writeln('  ping ip      - Ping a host');
-    term.writeln('  ifconfig     - View network settings');
-    term.writeln('  help         - Show this help message');
-    prompt();
-    return;
-  }
+    case 'help':
+      state.terminal.writeln('Available Commands:');
+      state.terminal.writeln('  ls           - List directory contents');
+      state.terminal.writeln('  cd <dir>     - Change directory');
+      state.terminal.writeln('  cat <file>   - View file contents');
+      state.terminal.writeln('  clear        - Clear the screen');
+      state.terminal.writeln('  ssh user@ip  - Connect to a machine');
+      state.terminal.writeln('  nmap subnet  - Scan network for machines');
+      state.terminal.writeln('  ping ip      - Ping a host');
+      state.terminal.writeln('  ifconfig     - View network settings');
+      state.terminal.writeln('  help         - Show this help message');
+      prompt();
+      return;
 
-  else {
-    term.writeln(`Command not found: ${command}`);
+    default:
+      state.terminal.writeln(`Command not found: ${command}`);
   }
 
   prompt();
 }
 
 function getCurrentDir() {
-  if (!currentMachine || currentMachine === 'SBC_1') {
-    // If local boot system (SBC_1), treat root `/` normally
-    let dir = fileSystem['/'];
-    for (const part of currentPath) {
-      if (!dir.contents || !dir.contents[part]) return null;
-      dir = dir.contents[part];
-    }
-    return dir;
-  }
-  // Normal remote machine filesystem
-  let dir = fileSystem['/']['contents'][currentMachine];
-  for (const part of currentPath) {
-    if (!dir.contents || !dir.contents[part]) return null;
+  let dir = state.machines[state.currentMachine]?.fs['/'];
+  for (const part of state.currentPath) {
+    if (!dir?.contents?.[part]) return null;
     dir = dir.contents[part];
   }
   return dir;
 }
 
 function prompt() {
-  term.write(`\r\n${currentUsername || 'user'}@${currentHostname || 'SBC_1'}:/${currentPath.join('/')}$ `);
+  const pathStr = state.currentPath.join('/');
+  state.terminal.write(`\r\n${state.currentUser || 'user'}@${state.currentMachine || 'SBC_1'}:/${pathStr}$ `);
 }

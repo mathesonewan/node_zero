@@ -1,27 +1,14 @@
+// loginManager.js
+
 import narrative from './narrative.js';
 import { getTypingDelay } from './terminalHandler.js';
 import systems from './systems.js';
-import { runCommand } from './filesystemManager.js';
+import state from './stateManager.js';
 
-let terminal = null;
 let refreshLineFunc = null;
-let commandBuffer = '';
-let cursorPosition = 0;
-let commandHistory = [];
-let historyIndex = -1;
-
-export let currentMachine = null;
-export let currentUsername = '';
-export let currentHostname = '';
-export let pendingLogin = '10.10.10.99';
-export let pendingUsername = '';
-export let awaitingUsername = false;
-export let awaitingPassword = false;
-export let currentPath = [];
-export { commandBuffer, cursorPosition };
 
 export async function initLogin(termInstance, refreshLineInstance) {
-  terminal = termInstance;
+  state.terminal = termInstance;
   refreshLineFunc = refreshLineInstance;
 }
 
@@ -33,112 +20,73 @@ export async function outputIntro() {
     await delay(300);
   }
 
-  terminal.writeln("\r\nConnecting to SBC_1...");
-  terminal.write("\r\nUsername: ");
-  awaitingUsername = true;
+  // ✅ Set the login target BEFORE starting username prompt
+  state.pendingLogin = '10.10.10.99';
+
+  state.terminal.writeln("\r\nConnecting to SBC_1...");
+  state.awaitingUsername = true;
+  state.commandBuffer = '';
+  state.cursorPosition = 0;
+  refreshPrompt('username');
 }
+
 
 async function typeNarrativeLine(line) {
   for (const char of line) {
-    terminal.write(char);
+    state.terminal.write(char);
     if (getTypingDelay() > 0) {
       await delay(getTypingDelay());
     }
   }
-  terminal.write('\r\n');
+  state.terminal.write('\r\n');
 }
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function handleKeyInput(e) {
-  const { key, domEvent } = e;
-  const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
+// This function assumes Enter has been pressed
+export function handleLoginInput() {
+  if (state.awaitingUsername) {
+    state.pendingUsername = state.commandBuffer.trim();
+    state.commandBuffer = '';
+    state.cursorPosition = 0;
+    state.awaitingUsername = false;
+    state.awaitingPassword = true;
 
-  if (domEvent.key === 'Enter') {
-    domEvent.preventDefault();
-    terminal.write('\r\n');
-
-    if (awaitingUsername) {
-      pendingUsername = commandBuffer.trim();
-      commandBuffer = '';
-      cursorPosition = 0;
-      awaitingUsername = false;
-      awaitingPassword = true;
-
-      if (refreshLineFunc) {
-        refreshLineFunc('password', commandBuffer, currentUsername, currentHostname, currentPath);
-      }
-    }
-    else if (awaitingPassword) {
-      const target = systems.find(sys => sys.ip === pendingLogin);
-
-      if (target && pendingUsername === target.username && commandBuffer === target.password) {
-        terminal.writeln('\r\nWelcome to ' + target.hostname + '!');
-        currentUsername = pendingUsername;
-        currentHostname = target.hostname.replace('.local', '');
-        currentMachine = "SBC_1"; // Force set currentMachine to SBC_1 after login
-        currentPath = [];
-        awaitingPassword = false;
-      } else {
-        terminal.writeln('\r\nAccess Denied.');
-        awaitingPassword = false;
-        awaitingUsername = true;
-        terminal.writeln('\r\nReturning to login...');
-      }
-
-      pendingUsername = '';
-      pendingLogin = '10.10.10.99';
-      commandBuffer = '';
-      cursorPosition = 0;
-
-      if (refreshLineFunc) {
-        const promptMode = awaitingUsername ? 'username' : 'shell';
-        refreshLineFunc(promptMode, commandBuffer, currentUsername, currentHostname, currentPath);
-      }
-    }
-    else {
-      if (commandBuffer.trim() !== '') {
-        commandHistory.push(commandBuffer);
-      }
-      historyIndex = commandHistory.length;
-      runCommand(commandBuffer);
-      commandBuffer = '';
-      cursorPosition = 0;
-
-      if (refreshLineFunc) {
-        refreshLineFunc('shell', commandBuffer, currentUsername, currentHostname, currentPath);
-      }
-    }
+    refreshPrompt('password');
   }
-  else if (printable) {
-    domEvent.preventDefault();
-    commandBuffer = commandBuffer.slice(0, cursorPosition) + key + commandBuffer.slice(cursorPosition);
-    cursorPosition++;
 
-    if (refreshLineFunc) {
-      const promptMode = awaitingUsername ? 'username' :
-                         awaitingPassword ? 'password' : 'shell';
-      refreshLineFunc(promptMode, commandBuffer, currentUsername, currentHostname, currentPath);
+  else if (state.awaitingPassword) {
+    const target = systems.find(sys => sys.ip === state.pendingLogin);
+    
+    if (target && state.pendingUsername === target.username && state.commandBuffer === target.password) {
+      state.terminal.writeln('\r\nWelcome to ' + target.hostname + '!');
+      state.currentUser = state.pendingUsername;
+      state.currentMachine = target.hostname.replace('.local', '');
+      state.currentPath = '/';
+      state.loginComplete = true;
+      state.awaitingPassword = false;
+    } else {
+      state.terminal.writeln('\r\nAccess Denied.');
+      state.awaitingPassword = false;
+      state.awaitingUsername = true;
+      state.terminal.writeln('\r\nReturning to login...');
     }
+    
+    // Now clear, after everything
+    state.pendingUsername = '';
+    state.pendingLogin = '10.10.10.99';
+    state.commandBuffer = '';
+    state.cursorPosition = 0;
+    
+    const promptMode = state.awaitingUsername ? 'username' : 'shell';
+    refreshPrompt(promptMode);
+  }    
+}
+
+function refreshPrompt(mode) {
+  if (refreshLineFunc) {
+    refreshLineFunc(mode, state.commandBuffer, state.currentUser, state.currentMachine, [state.currentPath]);
   }
-  else if (domEvent.key === 'Backspace') {
-    domEvent.preventDefault();
-    if (cursorPosition > 0) {
-      commandBuffer = commandBuffer.slice(0, cursorPosition - 1) + commandBuffer.slice(cursorPosition);
-      cursorPosition--;
-  
-      // Immediately refresh the line after deletion
-      if (refreshLineFunc) {
-        if (awaitingUsername) {
-          refreshLineFunc('username', commandBuffer, currentUsername, currentHostname, currentPath);
-        } else if (awaitingPassword) {
-          refreshLineFunc('password', commandBuffer, currentUsername, currentHostname, currentPath);
-        } else {
-          refreshLineFunc('shell', commandBuffer, currentUsername, currentHostname, currentPath);
-        }
-      }
-    }
-  }
-}  
+}
