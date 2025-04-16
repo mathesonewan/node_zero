@@ -1,6 +1,6 @@
 # node.zero - Changelog
 
-## [Unreleased]
+## [Unreleased] 
 
 ### Added
 - Full CRT flicker overhaul with low/medium/high intensity tiers
@@ -12,7 +12,7 @@
 - `outputManager.js`, `filesystemManager.js`, and `inputManager.js` reviewed and confirmed stable
 - Menu `X` close button repositioned for better UX targeting
 - README.dev.md and project documentation updated with new architecture and visuals
-- Defensive state loading in `settings.js` for localStorage persistence
+- Defensive state loading in `settings.js` for localStorage persistence 
 
 ### Changed
 - `styles.css` cleaned and restructured with clear sections and comments
