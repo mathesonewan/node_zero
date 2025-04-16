@@ -2,11 +2,13 @@ const savedInstant = localStorage.getItem('instantText');
 const savedDelay = localStorage.getItem('typingDelay');
 
 const settings = {
-  skipIntro: true,
+  skipIntro: localStorage.getItem('skipIntro') === 'true',
   instantText: savedInstant === 'true',
   darkMode: false,
   enableCRT: true,
   crtFlicker: localStorage.getItem('crtFlicker') || 'medium',
-  terminalTheme: localStorage.getItem('terminalTheme') || 'green'
+  terminalTheme: localStorage.getItem('terminalTheme') || 'green',
+  audioEnabled: localStorage.getItem('audioEnabled') === 'true'
 };
+
 export default settings;

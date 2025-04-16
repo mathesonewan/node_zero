@@ -1,27 +1,47 @@
+/* ==================================================
+   node.zero CRT Terminal Stylesheet (cleaned + commented)
+   ================================================== */
+
 /* --- Base Layout --- */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  background: #001100; /* CRT green background */
+  background: #001100; /* Default CRT green */
   overflow: hidden;
 }
 
-/* --- Terminal Styling --- */
+/* --- Terminal Window --- */
 #terminal {
   position: absolute;
   width: 100%;
   height: 100%;
-  animation: flicker 8s infinite;
 }
 
-/* --- Terminal Text Glow --- */
 #terminal .xterm-screen {
-  text-shadow: 0 0 2px #00FF00, 0 0 6px #00FF00;
+  text-shadow: 0 0 2px #00FF00, 0 0 6px #00FF00; /* CRT glow */
 }
 
-/* --- Scanline Effect --- */
+/* --- Flicker Keyframes --- */
+@keyframes flickerLow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes flickerMed {
+  0%, 100% { opacity: 1; }
+  18.5%, 53.7%, 79.1% { opacity: 0; }
+  19%, 54.2%, 79.6% { opacity: 1; }
+}
+
+@keyframes flickerHigh {
+  0%, 100% { opacity: 1; }
+  10%, 30%, 50%, 70%, 90% { opacity: 0; }
+  11%, 31%, 51%, 71%, 91% { opacity: 1; }
+}
+
+/* --- Scanline --- */
 #scanline {
   position: absolute;
   top: -10%;
@@ -37,70 +57,6 @@ html, body {
   animation: scanline-move 8s linear infinite;
 }
 
-/* --- Noise Layer 1 (Static) --- */
-#noise {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('https://www.transparenttextures.com/patterns/noisy.png');
-  opacity: 0.3; /* Strong noise */
-  pointer-events: none;
-  z-index: 15;
-}
-
-/* --- Noise Layer 2 (Moving) --- */
-#noise2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('https://www.transparenttextures.com/patterns/noisy.png');
-  opacity: 0.05;
-  pointer-events: none;
-  z-index: 16;
-  animation: noiseMove 5s infinite linear;
-}
-
-/* --- Flicker Animation --- */
-
-@keyframes flickerLow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.9; }
-}
-
-/* Organic irregular flicker – 6s cycle */
-@keyframes flickerMed {
-  0%, 100% { opacity: 1; }
-  18.5%, 53.7%, 79.1% { opacity: 0; }
-  19%, 54.2%, 79.6% { opacity: 1; }
-}
-
-/* Chaotic flashing glitch – 2s cycle */
-@keyframes flickerHigh {
-  0%, 100% { opacity: 1; }
-  10%, 30%, 50%, 70%, 90% { opacity: 0; }
-  11%, 31%, 51%, 71%, 91% { opacity: 1; }
-}
-
-
-
-
-/* --- Flicker Button States --- */
-
-#flickerLow.selected,
-#flickerMedium.selected,
-#flickerHigh.selected {
-  background-color: #00ff00;
-  color: black;
-  font-weight: bold;
-  border-color: #00ff00;
-}
-
-
-/* --- Scanline Move Animation --- */
 @keyframes scanline-move {
   0% { top: -10%; opacity: 0; }
   10% { opacity: 1; }
@@ -109,13 +65,41 @@ html, body {
   100% { top: 110%; opacity: 0; }
 }
 
-/* --- Noise Movement Animation --- */
+/* --- Noise Layers --- */
+#noise, #noise2 {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/noisy.png');
+  pointer-events: none;
+  z-index: 15;
+}
+
+#noise {
+  opacity: 0.3;
+}
+
+#noise2 {
+  opacity: 0.05;
+  z-index: 16;
+  animation: noiseMove 5s infinite linear;
+}
+
 @keyframes noiseMove {
   0% { background-position: 0 0; }
   100% { background-position: 10px 10px; }
 }
 
-/* --- Menu Button --- */
+/* --- Scrollbar Suppression for xterm.js --- */
+#terminal .xterm-viewport {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#terminal .xterm-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Menu UI --- */
 #menuButton {
   position: fixed;
   top: 10px;
@@ -130,14 +114,10 @@ html, body {
   z-index: 200;
 }
 
-/* --- Menu Overlay --- */
 #menuOverlay {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0, 0, 0, 0.9);
   color: #00FF00;
   font-family: 'Courier New', monospace;
@@ -147,91 +127,58 @@ html, body {
   padding: 20px;
 }
 
-/* --- Close Menu Button --- */
 #closeMenu {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   background: transparent;
   color: #00FF00;
   border: 1px solid #00FF00;
-  align-self: flex-end;
   font-size: 20px;
   cursor: pointer;
+  z-index: 300;
 }
 
-/* --- Menu Settings Layout --- */
+
 .menuSetting {
   margin-top: 30px;
 }
 
-/* --- Hide xterm.js Scrollbar --- */
-#terminal .xterm-viewport {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE */
-}
-
-#terminal .xterm-viewport::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-/* --- Menu Checkbox Customization --- */
-#menuOverlay input[type="checkbox"] {
-  appearance: none;
-  background-color: transparent;
-  border: 2px solid #00FF00;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-#menuOverlay input[type="checkbox"]:checked {
-  background-color: #00FF00;
-}
-
-/* --- Menu Select Dropdown Customization --- */
-#menuOverlay select {
-  background: transparent;
-  color: #00FF00;
-  border: 2px solid #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  padding: 5px;
-  cursor: pointer;
-  appearance: none; /* Kill browser default styles */
-}
-
-/* --- Menu Button Customization (Overrides) --- */
-#menuOverlay button, #menuOverlay select, #menuOverlay input[type="number"], #menuOverlay input[type="button"] {
-  background: transparent;
-  color: #00FF00;
-  border: 2px solid #00FF00;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  padding: 8px 12px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-#menuOverlay input[type="checkbox"] {
-  vertical-align: middle;
-  appearance: none;
-  background-color: transparent;
-  border: 2px solid #00FF00;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-/* --- Menu Button Hover Effect --- */
 #menuOverlay button:hover,
 #menuButton:hover {
   background-color: #00FF00;
   color: #001100;
   box-shadow: 0 0 8px #00FF00;
 }
-.menu-button.selected {
-  background-color: #00ff00; /* or #005500 for a more subtle look */
-  color: black;
-  font-weight: bold;
+#menuOverlay button {
+  background: transparent;
+  color: #00FF00;
+  border: 2px solid #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  padding: 6px 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
 }
-/* --- Menu Select Dropdown Full CRT Customization --- */
+
+/* --- Checkbox Styling --- */
+#menuOverlay input[type="checkbox"] {
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid #00FF00;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+#menuOverlay input[type="checkbox"]:checked {
+  background-color: #00FF00;
+}
+
+/* --- Select Dropdown Styling --- */
 #menuOverlay select,
 #menuOverlay select:hover,
 #menuOverlay select:focus,
@@ -244,32 +191,27 @@ html, body {
   padding: 5px;
   cursor: pointer;
   box-shadow: 0 0 8px #00FF00;
-  outline: none; /* Kill default white focus box */
-  appearance: none; /* Kill browser default styles */
+  outline: none;
+  appearance: none;
 }
-/* Text speed menu buttons */
+
+/* --- Flicker, Theme, and Speed Button States --- */
+#flickerLow.selected,
+#flickerMedium.selected,
+#flickerHigh.selected,
 #slowNarrativeSpeed.selected,
 #fastNarrativeSpeed.selected,
-#instantNarrativeSpeed.selected {
+#instantNarrativeSpeed.selected,
+#themeGreen.selected {
   background-color: #00ff00;
   color: black;
   font-weight: bold;
   border-color: #00ff00;
 }
 
-
-#slowTextSpeed:hover,
-#fastTextSpeed:hover,
-#instantTextSpeed:hover {
-  background-color: #222;
-  color: #fff;
-}
-
-#slowTextSpeed.selected,
-#fastTextSpeed.selected,
-#instantTextSpeed.selected {
-  background-color: #00ff00;
+#themeYellow.selected {
+  background-color: #FFD900;
   color: black;
   font-weight: bold;
-  border-color: #00ff00;
+  border-color: #FFD900;
 }

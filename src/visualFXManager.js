@@ -1,9 +1,10 @@
-console.log("settings import test:", settings);
-
 
 // visualFXManager.js
 
 import settings from './settings.js';
+
+console.log("settings import test:", settings);
+
 
 let terminal = null;
 let scanline = null;
@@ -51,24 +52,34 @@ export function applyFlicker(level) {
 
 // ---- Theme ----
 export function applyTheme(theme) {
-  if (!terminal) return;
-
-  settings.terminalTheme = theme;
-  localStorage.setItem('terminalTheme', theme);
-
-  switch (theme) {
-    case 'green':
-      terminal.style.backgroundColor = '#001100';
-      terminal.style.color = '#00FF00';
-      break;
-    case 'blue':
-      terminal.style.backgroundColor = '#001122';
-      terminal.style.color = '#00FFFF';
-      break;
-    default:
-      console.warn(`Unknown theme: ${theme}`);
+    console.warn('applyTheme() is currently disabled — xterm fights back.');
+    return;
+  
+    /*
+    settings.terminalTheme = theme;
+    localStorage.setItem('terminalTheme', theme);
+  
+    switch (theme) {
+      case 'green':
+        terminal.style.backgroundColor = '#001100';
+        terminal.style.color = '#00FF00';
+        break;
+      case 'yellow':
+        terminal.style.backgroundColor = '#1A1500';
+        terminal.style.color = '#FFD900';
+        break;
+      default:
+        console.warn(`Unknown theme: ${theme}`);
+    }
+  
+    const xtermScreen = terminal.querySelector('.xterm-screen');
+    if (xtermScreen) {
+      xtermScreen.style.color = terminal.style.color;
+      xtermScreen.style.backgroundColor = terminal.style.backgroundColor;
+    }
+    */
   }
-}
+  
 
 // ---- Expansion Hooks (not implemented yet) ----
 export function triggerStartupBurst() {
