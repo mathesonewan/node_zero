@@ -67,4 +67,12 @@ These are system ideas that belong to node.zero, but haven’t earned their plac
 
 ---
 
+## 🧭 Design Rule of Thumb
+> **Does this feature make the system more *alive*, or just more *complete*?**
+>
+> If it’s **alive** → belongs in core.
+> If it’s just **complete** → keep it blackboxed or kill it.
+
+---
+
 *Open carefully.*
