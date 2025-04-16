@@ -1,4 +1,6 @@
-// commands/ls.js
+console.log('✅ lsCommand loaded');
+
+
 import state from '../stateManager.js';
 import { termPrint } from '../outputManager.js';
 

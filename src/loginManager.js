@@ -74,7 +74,7 @@ export function handleLoginInput() {
       // Set up the machine's FS if it's a real target
       if (!state.machines[machineName]) {
         state.machines[machineName] = {
-          fs: structuredClone(fsTemplates.default),
+          fs: fsTemplates.default(),
           users: {
             [state.pendingUsername]: state.commandBuffer
           }
@@ -100,6 +100,6 @@ export function handleLoginInput() {
 
 function refreshPrompt(mode) {
   if (refreshLineFunc) {
-    refreshLineFunc(mode, state.commandBuffer, state.currentUser, state.currentMachine, [state.currentPath]);
+    refreshLineFunc(mode, state.commandBuffer, state.currentUser, state.currentMachine, state.currentPath);
   }
 }
