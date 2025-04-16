@@ -20,7 +20,8 @@ Welcome to the dev side of `node.zero`: a modular, CRT-styled terminal simulatio
 - `filesystem.js` — base filesystem structure
 - `fsTemplates.js` — cloned templates for per-machine FS
 - `loginManager.js` — handles intro, login, and prompt boot
-- `menuManager.js` — UI overlay with speed, theme, and flicker controls
+- `menuManager.js` — UI overlay with speed and flicker controls (theming temporarily disabled)
+- `visualFXManager.js` — controls CRT visuals like flicker, scanline, skew
 
 ---
 
@@ -33,12 +34,10 @@ Note: Code block formatting below is commented out to prevent markdown rendering
 in some preview engines. Edit with caution.
 -->
 
-
 //```js
 // export function lsCommand(args) { ... }
 // export function cdCommand(args) { ... }
 //```
-
 
 **Implemented commands:**
 - `ls`
@@ -57,17 +56,20 @@ All output is printed using `termPrint()` for consistency.
 
 The menu overlay allows users to:
 
-- Toggle **text speed**: `slow`, `fast`, `instant`
-- Set **CRT flicker**: `low`, `medium`, `high`
-- Switch **theme**: `green` or `blue`
+- Toggle **narrative text speed**: `slow`, `fast`, `instant`
+- Set **CRT flicker intensity**: `Stable CRT`, `Signal Interference`, `Broken Terminal`
+- Enable/disable **boot sequence**
+- Toggle **audio click sounds** (placeholder only)
 
-Settings are saved via `localStorage` and applied using `settings.js` and `setTypingDelay()`.
+Settings are saved via `localStorage` and applied using `settings.js`, `setTypingDelay()`, and `visualFXManager.js`.
 
-Terminal focus is restored when the menu is closed.
+Terminal focus is restored after the menu closes. Visual feedback (`.selected`) is applied consistently.
+
+**Note:** Theme support is temporarily disabled due to xterm.js limitations. Button removed from UI, logic retained.
 
 ---
 
-## 📐 Dev Guidelines
+## 🖐️ Dev Guidelines
 
 - Use Git. Commit often. Branch for features.
 - Clarity > Cleverness. Name things properly.
@@ -93,7 +95,10 @@ Terminal focus is restored when the menu is closed.
 - Simulated Linux boot sequence
 - New commands: `mkdir`, `touch`, `ssh`, `ping`, etc.
 - Dummy networked nodes (some real, some faked)
-- More visual polish: transitions, icons, subtle animations
+- Visual polish: startup flicker burst, noise variation, RGB ghosting
+- Keypress-triggered distortion events
+- Scanline and vignette refinements
+- Future reimplementation of theme system using `xterm.setOption('theme', {...})`
 
 ---
 

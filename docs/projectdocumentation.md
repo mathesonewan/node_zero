@@ -8,10 +8,14 @@
 |:------|:------|:------|
 | CRT Green Background | ✅ | #001100 dark radioactive green |
 | Terminal Text Glow | ✅ | Multiple green glow layers |
-| Flicker Animation | ✅ | Smooth opacity flicker every 8s |
-| Scanlines | ✅ | Randomized movement, cubic-bezier curves |
-| Noise Layer (Static + Moving) | ✅ | Strong CRT static noise |
+| Flicker Animation | ✅ | Tiered intensity: low (smooth), medium (irregular), high (chaotic) |
+| Scanlines | ✅ | Vertical sweep with brightness scaling by intensity |
+| Noise Layer (Static + Moving) | ✅ | Two overlapping noise layers, drift included |
 | Burn-in Layer | ✅ | Subtle ghosting overlay |
+| Distortion Pulse | ⏳ | Planned: triggered by key-spam or random event |
+| Startup Flash / Burst | ⏳ | Planned: one-time CRT flash during boot |
+| Vignette/Dark Corners | ⏳ | Planned: radial gradient overlay |
+| RGB Ghosting | ⏳ | Planned: text shadow smearing at high intensity |
 
 ---
 
@@ -51,10 +55,21 @@
 |:-----|:--------|
 | `index.html` | Core layout: Terminal + Visual Layers + Menu |
 | `styles.css` | CRT theming, menu styling, animations |
-| `main.js` | Terminal logic, SSH login, filesystem handling |
-| `narrative.js` | Intro narrative text |
-| `filesystem.js` | Virtual file tree for machines |
-| `systems.js` | IPs, hostnames, usernames, passwords database |
+| `main.js` | Terminal setup, boot, menu init |
+| `narrative.js` | (Unreviewed) Intro narrative text engine |
+| `filesystem.js` | Base filesystem structure |
+| `fsTemplates.js` | Per-machine filesystem cloning |
+| `filesystemManager.js` | ✅ | Modular FS logic, safe fallback handling |
+| `systems.js` | (Unreviewed) Machine credentials/IP registry |
+| `stateManager.js` | ✅ | Central runtime state store |
+| `inputManager.js` | ✅ | Raw input + command parsing, stable structure |
+| `outputManager.js` | ✅ | `termPrint`, `termClear`, typing system |
+| `settings.js` | ✅ | Persistent state handling via localStorage |
+| `visualFXManager.js` | ✅ | Flicker tiers, theming (disabled), scanlines |
+| `menuManager.js` | ✅ | UI overlay logic, `.selected` sync, checkbox handlers |
+| `loginManager.js` | ✅ | Boot + login logic |
+| `terminalHandler.js` | ✅ | Typing delay + prompt helper |
+| `animations.js` | (Unreviewed) unknown purpose — likely CRT/narrative |
 
 ---
 
@@ -64,13 +79,12 @@
 |:--------|:-------|:------|
 | Menu Button (top right) | ✅ | Green themed, fixed position |
 | Menu Overlay | ✅ | Full screen, semi-transparent black |
-| Close (X) Button | ✅ | Dismisses overlay |
-| Audio Toggle | ✅ | Visual only (no wired function yet) |
-| Text Speed Setting | ✅ | Visual only |
-| Skip Boot Sequence | ✅ | Visual only |
-| CRT Flicker Intensity Dropdown | ✅ | Visual only |
-| Scanlines Toggle | ✅ | Visual only |
-| Theme Color Selector | ✅ | Visual only |
+| Close (X) Button | ✅ | Repositioned for easier click-back from MENU |
+| Audio Toggle | ✅ | Wired, setting persisted (placeholder only) |
+| Text Speed Setting | ✅ | Fully wired with localStorage persistence |
+| Skip Boot Sequence | ✅ | Fully wired with persistence |
+| CRT Flicker Intensity Buttons | ✅ | Fully wired, visually distinct tiers |
+| Theme Color Selector | ❌ | Feature disabled, Fallout button hidden (logic preserved) |
 
 ---
 
@@ -90,6 +104,8 @@
 | `ifconfig` | ✅ | Fake network adapter config |
 | `help` | ✅ | Lists available commands |
 
+**Note:** Project will not support fake write ops like `mkdir`. Command routing will remain explicit.
+
 ---
 
 ## 📻 Network Simulation
@@ -107,34 +123,33 @@
 
 | Issue | Impact | Notes |
 |:------|:------|:------|
-| Menu Settings not wired | Low | Audio, Flicker Level, Theme Color, etc. |
-| Distortion Visual Effects Removed | Low | Deliberate for stability |
+| Theme switching broken in xterm | Low | `#terminal` color ignored by xterm rendering engine |
 | Boot Narrative Text | Low | Needs full customization pass |
+| `animations.js` | Unknown | Possibly unused; verify before clean-up |
 
 ---
 
 # 📋 Notes
 
-- Project is now stable.
-- Visuals and Terminal behavior fully matched to early design goals.
-- Ready for new feature expansions (e.g., audio, real settings, ASCII animations).
+- Visual polish now matches design intent
+- Menu system is fully operational
+- Flicker and CRT effects upgraded for realism
+- Theming logic retained but UI disabled
+- Input, output, and file logic reviewed and stable
 
 ---
 
-# 📋 Additional Updates (2024-05-18)
+# 📋 Additional Updates (2024-05-18+)
 
 ## 📦 Structural Modularization & Preparation
 
 | Change | Status | Notes |
 |:-------|:-------|:------|
-| Created `stateManager.js` | ✅ | Centralized state management module (staged, inactive) |
-| Created `inputManager.js` | ✅ | Dedicated terminal input handler (staged, inactive) |
-| Refactored login and filesystem logic | ✅ | Prepping for cleaner module boundaries |
-| Separated local vs remote machine logic | ✅ | Clearer handling for SBC_1 boot system |
+| Created `stateManager.js` | ✅ | Centralized state management module |
+| Created `inputManager.js` | ✅ | Dedicated terminal input handler |
+| Refactored login and filesystem logic | ✅ | Modular, isolated logic per concern |
+| Separated local vs remote machine logic | ✅ | Handles networked node simulation |
+| Added `visualFXManager.js` | ✅ | CRT flicker/scanline/delay management |
+| Menu fully wired | ✅ | Buttons, checkboxes, and settings now fully interactive |
 
-- `stateManager.js` will eliminate circular dependencies.
-- `inputManager.js` will isolate and cleanly route terminal key input.
-- Staged for incremental activation and testing.
-
-**Project remains stable. Next step is modular activation phase.**
-
+**System is modular and stable. Next phase: boot sequence, splash animation, glitch enhancements, and narrative refinement.**

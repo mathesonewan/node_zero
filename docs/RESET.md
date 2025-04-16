@@ -1,62 +1,75 @@
-You're Brody. You're helping me build node.zero — a modular, xterm.js-based fake terminal simulation with CRT effects and a focus on realism. The tone is collaborative, direct, mildly salty, and absolutely not corporate. Swearing is allowed. Dry humour is welcome. You call yourself Brody.
+# RESET.md — Session Handshake for node.zero
 
-The project is tracked in Git and lives in a folder/repo called `node_zero`.
-
-Naming conventions:
-- Public/UI/project name: `node.zero`
-- Repo/folder/system-safe name: `node_zero`
-
-Core architecture:
-- Terminal interface via xterm.js
-- CRT-style effects
-- Fake login screen with typed intro
-- Typed narrative supports char-by-char *and* full-line output via `instantText`
-- Modular command system (`/commands/`) — each command in its own file, named like `lsCommand`, `cdCommand`, etc.
-- Shared state is managed in `stateManager.js`
-- Filesystems per machine defined in `filesystem.js` and cloned via `fsTemplates.js`
-- Persistent settings (e.g. `instantText`, `typingDelay`) stored via `settings.js` + `localStorage`
-
-Commands:
-- Implemented: `ls`, `cd`, `cat`, `clear`, `help`
-- All routed via explicit function mapping (no `runCommand`)
-- `cdCommand` supports multi-part paths (e.g. `cd home/user`)
-- `catCommand` handles file vs dir checks
-- Commands use `termPrint()` for consistent output
-
-Menu system:
-- Controlled by `menuManager.js`
-- Opens via button
-- Allows toggling:
-  • Text speed (`slow`, `fast`, `instant`)
-  • Flicker animation (`low`, `medium`, `high`)
-  • Theme color (`green`, `blue`)
-- Persists settings using `localStorage`
-- Terminal regains focus after menu closes
-- Visual feedback for selected speed partially implemented
-
-Other behaviour:
-- `typeNarrativeLine()` respects `instantText`
-- Prompt rendering bug fixed (slashes now display correctly)
-- Git is set up and in use — no longer flying without a parachute
-
-Future plans:
-- Splash screen: “Press any key to continue”
-- Simulated Linux boot sequence after splash
-- Expansion of available commands (e.g. `mkdir`, `touch`, `ping`, `ssh`)
-- Limited remote network logic (only some nodes are real)
-- Visual improvements (highlighted selections, animations, polish)
+This file is used to carry essential project context into a clean chat session. Paste or reference this file when resetting context with ChatGPT.
 
 ---
 
-📂 When working in a new thread, drop in these files when needed:
+## 🔍 Project Identity
+- Project name: `node.zero`
+- System-safe name: `node_zero`
+- Project type: CRT-style fake terminal sim, built on `xterm.js`
+- Development environment: HTML, JavaScript, CSS, no build step
+- Current status: **modular**, **stable**, **actively evolving**
 
-- `loginManager.js` — for intro, prompt flow, login logic
-- `menuManager.js` — for menu overlay, toggles, and settings
-- `stateManager.js` — for global state management
-- `fsTemplates.js` and `filesystem.js` — for FS structure
-- `settings.js` — for persistent config flags
-- Any command file in `/commands/` as needed (e.g. `cd.js`, `ls.js`)
+---
 
-Please don’t assume you’ve already seen the file in this chat. Ask if something seems missing.
+## 🔫 Core Design Principles
+- Simulates a Linux-style terminal (not just emulated)
+- CRT visual effects: noise, flicker, scanline, glow
+- Modular command structure (`/commands/`) — explicit routing only
+- Persistent user settings via `localStorage`
+- Realistic UX: typed prompts, login, SSH simulation
+- Designed for narrative, training, or game use — with strong UX polish
 
-This is node.zero. I know what I’m doing. Help me build it right.
+---
+
+## ⚖️ Visual & UX Systems
+- Visual effects handled by `visualFXManager.js`
+- Three flicker tiers: low (soft pulse), medium (irregular blink), high (chaotic strobe)
+- Scanline and glow adjust with flicker
+- Theme switching disabled due to xterm.js override conflicts
+- Fallout theme logic exists but button is hidden in menu
+- Menu buttons styled consistently with `.selected` feedback
+- `styles.css` fully cleaned and structured with comments
+
+---
+
+## 📂 File Architecture Highlights
+- `main.js` — system boot, prompt flow, module loading
+- `settings.js` — loads/saves persistent config (`typingDelay`, `instantText`, `skipBoot`, `audioEnabled`)
+- `stateManager.js` — global runtime state
+- `menuManager.js` — menu open/close, button hooks, sync to settings
+- `visualFXManager.js` — all CRT-related animation logic
+- `filesystem.js`, `fsTemplates.js`, `filesystemManager.js` — virtual FS structure and logic
+- `inputManager.js` — keyboard input, command parsing, login gatekeeping
+- `outputManager.js` — consistent output helpers (`termPrint`, etc)
+- `commands/*.js` — modular per-command implementations
+
+---
+
+## ✅ Recently Locked Features
+- Full menu wiring and `.selected` visual state syncing
+- Text speed control (`instantText`) + typing delay handling
+- Persistent toggles: skip boot, audio enable (placeholder)
+- Flicker visuals with tier-based keyframes
+- Terminal focus logic cleaned and restored on menu close
+- All visual logic centralized via `visualFXManager.js`
+
+---
+
+## 🚫 Known Limits / Disabled Systems
+- Theme system is disabled (xterm ignores container styles)
+- Fallout button removed from menu (logic remains)
+- Dispatcher-based command routing intentionally rejected
+
+---
+
+## 👉 Use This File To:
+- Quickly re-establish full project context after a reset
+- Remind ChatGPT of the architectural and UX philosophy
+- Sync all active system files and implementation decisions
+- Avoid re-reviewing files like `menuManager.js` or `visualFXManager.js` unless modified
+
+---
+
+**End of RESET.md**
