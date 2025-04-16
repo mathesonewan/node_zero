@@ -1,6 +1,7 @@
 import { setTypingDelay } from './terminalHandler.js';
 import settings from './settings.js';
 import state from './stateManager.js';
+import { applyFlicker, applyTheme } from './visualFXManager.js';
 
 export function initializeMenu() {
   const menuButton = document.getElementById('menuButton');
@@ -41,10 +42,10 @@ export function initializeMenu() {
   }
 
   // --- Text Speed Buttons ---
-const slowButton = document.getElementById('slowTextSpeed');
-const fastButton = document.getElementById('fastTextSpeed');
-const instantButton = document.getElementById('instantTextSpeed');
-
+  const slowButton = document.getElementById('slowNarrativeSpeed');
+  const fastButton = document.getElementById('fastNarrativeSpeed');
+  const instantButton = document.getElementById('instantNarrativeSpeed');
+  
 const buttons = {
   slow: slowButton,
   fast: fastButton,
@@ -86,47 +87,94 @@ if (slowButton && fastButton && instantButton) {
 }
 
   // --- Flicker Controls ---
-  const flickerLow = document.getElementById('flickerLow');
-  const flickerMedium = document.getElementById('flickerMedium');
-  const flickerHigh = document.getElementById('flickerHigh');
+const flickerLow = document.getElementById('flickerLow');
+const flickerMedium = document.getElementById('flickerMedium');
+const flickerHigh = document.getElementById('flickerHigh');
 
-  if (flickerLow && flickerMedium && flickerHigh) {
-    flickerLow.addEventListener('click', () => {
-      document.getElementById('terminal').style.animationDuration = '12s';
-    });
+const flickerButtons = {
+  low: flickerLow,
+  medium: flickerMedium,
+  high: flickerHigh
+};
 
-    flickerMedium.addEventListener('click', () => {
-      document.getElementById('terminal').style.animationDuration = '8s';
-    });
+function updateFlickerSelected(level) {
+  Object.entries(flickerButtons).forEach(([key, el]) => {
+    if (el) {
+      el.classList.toggle('selected', key === level);
+    }
+  });
+}
 
-    flickerHigh.addEventListener('click', () => {
-      document.getElementById('terminal').style.animationDuration = '4s';
-    });
-  }
+if (flickerLow && flickerMedium && flickerHigh) {
+  flickerLow.addEventListener('click', () => {
+    updateFlickerSelected('low');
+    applyFlicker('low');
+  });
+
+  flickerMedium.addEventListener('click', () => {
+    updateFlickerSelected('medium');
+    applyFlicker('medium');
+  });
+
+  flickerHigh.addEventListener('click', () => {
+    updateFlickerSelected('high');
+    applyFlicker('high');
+  });
+
+  // Restore selection on load
+  updateFlickerSelected(settings.crtFlicker || 'medium');
+}
+
 
   // --- Theme Controls ---
-  const themeGreen = document.getElementById('themeGreen');
-  const themeBlue = document.getElementById('themeBlue');
+const themeGreen = document.getElementById('themeGreen');
+const themeBlue = document.getElementById('themeBlue');
 
-  if (themeGreen && themeBlue) {
-    themeGreen.addEventListener('click', () => {
-      document.getElementById('terminal').style.backgroundColor = '#001100';
-      document.getElementById('terminal').style.color = '#00FF00';
-    });
+const themeButtons = {
+  green: themeGreen,
+  blue: themeBlue
+};
 
-    themeBlue.addEventListener('click', () => {
-      document.getElementById('terminal').style.backgroundColor = '#001122';
-      document.getElementById('terminal').style.color = '#00FFFF';
-    });
-  }
-
-  // --- Apply saved settings on load ---
-  const savedDelay = localStorage.getItem('typingDelay');
-  const savedInstant = localStorage.getItem('instantText');
-
-  if (savedDelay !== null) {
-    setTypingDelay(parseInt(savedDelay, 10));
-  }
-
-  settings.instantText = savedInstant === 'true';
+function updateThemeSelected(theme) {
+  Object.entries(themeButtons).forEach(([key, el]) => {
+    if (el) {
+      el.classList.toggle('selected', key === theme);
+    }
+  });
 }
+
+if (themeGreen && themeBlue) {
+  themeGreen.addEventListener('click', () => {
+    updateThemeSelected('green');
+    applyTheme('green');
+  });
+
+  themeBlue.addEventListener('click', () => {
+    updateThemeSelected('blue');
+    applyTheme('blue');
+  });
+
+  // Restore selection on load
+  updateThemeSelected(settings.terminalTheme || 'green');
+}
+
+
+   // --- Apply saved settings on load ---
+   const savedDelay = localStorage.getItem('typingDelay');
+   const savedInstant = localStorage.getItem('instantText');
+ 
+   if (savedDelay !== null) {
+     setTypingDelay(parseInt(savedDelay, 10));
+   }
+ 
+   settings.instantText = savedInstant === 'true';
+ 
+   // --- Reflect saved speed in UI ---
+   if (savedInstant === 'true') {
+     updateSelectedButton('instant');
+   } else if (savedDelay === '10') {
+     updateSelectedButton('fast');
+   } else {
+     updateSelectedButton('slow');
+   }
+  }

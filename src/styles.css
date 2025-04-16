@@ -65,14 +65,40 @@ html, body {
 }
 
 /* --- Flicker Animation --- */
-@keyframes flicker {
-  0%, 49%, 51%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.65;
-  }
+
+@keyframes flickerLow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
 }
+
+/* Organic irregular flicker – 6s cycle */
+@keyframes flickerMed {
+  0%, 100% { opacity: 1; }
+  18.5%, 53.7%, 79.1% { opacity: 0; }
+  19%, 54.2%, 79.6% { opacity: 1; }
+}
+
+/* Chaotic flashing glitch – 2s cycle */
+@keyframes flickerHigh {
+  0%, 100% { opacity: 1; }
+  10%, 30%, 50%, 70%, 90% { opacity: 0; }
+  11%, 31%, 51%, 71%, 91% { opacity: 1; }
+}
+
+
+
+
+/* --- Flicker Button States --- */
+
+#flickerLow.selected,
+#flickerMedium.selected,
+#flickerHigh.selected {
+  background-color: #00ff00;
+  color: black;
+  font-weight: bold;
+  border-color: #00ff00;
+}
+
 
 /* --- Scanline Move Animation --- */
 @keyframes scanline-move {
@@ -222,16 +248,15 @@ html, body {
   appearance: none; /* Kill browser default styles */
 }
 /* Text speed menu buttons */
-#slowTextSpeed,
-#fastTextSpeed,
-#instantTextSpeed {
-  background-color: #000;
-  color: #ccc;
-  border: 1px solid #444;
-  padding: 6px 12px;
-  cursor: pointer;
-  margin: 4px;
+#slowNarrativeSpeed.selected,
+#fastNarrativeSpeed.selected,
+#instantNarrativeSpeed.selected {
+  background-color: #00ff00;
+  color: black;
+  font-weight: bold;
+  border-color: #00ff00;
 }
+
 
 #slowTextSpeed:hover,
 #fastTextSpeed:hover,

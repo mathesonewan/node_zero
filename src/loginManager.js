@@ -6,6 +6,8 @@ import systems from './systems.js';
 import state, { resetSessionState } from './stateManager.js';
 import fsTemplates from './fsTemplates.js';
 import settings from './settings.js';
+import { initVisualFX } from './visualFXManager.js';
+initVisualFX();
 
 let refreshLineFunc = null;
 
