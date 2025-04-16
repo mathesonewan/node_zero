@@ -30,13 +30,28 @@ These are system ideas that belong to node.zero, but haven’t earned their plac
 ---
 
 ## 🚀 Terminal FX: Glitches, Distortion, Startups
-- [ ] `triggerStartupBurst()` in `visualFXManager.js` is a stub — implement full-screen CRT zap
-- [ ] Add optional CRT drone / background hum (slow LFO synth?)
-- [ ] Trigger screen skew or horizontal offset when key-spam detected
-- [ ] Possibly tie into `termTypeLine()` or keystroke burst
-- [ ] Consider subtle random vibration layer for `Broken Terminal` flicker level
+$1
 
 ---
+
+## 💣 Terminal Payload: Fake Encryption Sequence
+$1
+
+---
+
+## 🧮 Audio Sequencing: Pattern Generation + Tracker Logic
+$1
+
+---
+
+## 🌀 Wreckage Mode: Generative System Fusion
+- [ ] Inspired by 65daysofstatic's Wreckage Systems
+- [ ] Tie system state (node integrity, login status, system compromise) to audio synthesis
+- [ ] Allow degradation of visual fidelity to bleed into pitch modulation, envelope distortion, and FX warping
+- [ ] Let discovered nodes introduce new audio layers or modulations
+- [ ] Use Tone.js Transport and sequencing to build evolving, non-looping sonic behavior
+- [ ] Simulate system 'personality drift' through slow modulation of all audiovisual layers
+- [ ] Final state may be irreversible system collapse — musical, visual, and mechanical---
 
 ## 🎨 Style/Art Intentions
 - [ ] Introduce scanline curvature simulation (mild barrel distortion via CSS or SVG mask)
@@ -54,18 +69,30 @@ These are system ideas that belong to node.zero, but haven’t earned their plac
 ---
 
 ## 🤖 AI or Simulated Operators
-- [ ] Add simulated user sessions (e.g., `who`, `last`, `ps`) for immersion
-- [ ] NPCs leaving logs in home dirs (text files written by simulated users)
-- [ ] Fake system messages, warnings, service banners
+$1
 
 ---
 
-## ⚠️ Caution: Implementation Considerations
-- CRT audio will need gating or envelope smoothing to avoid sonic fatigue
-- Rough.js sketch map may require camera/panning logic for larger networks
-- Memory impact of continuous Tone.js synthesis loops must be monitored
+## 🧰 Framework / Reuse Potential
+$1
 
 ---
+
+## 🕳️ Shell Engine Extraction (for Future Projects)
+$1
+
+---
+
+## 🧨 CLI Horror Game (Post-node.zero)
+- [ ] Build psychological horror experience fully within a terminal interface
+- [ ] Inspired by: Doki Doki Literature Club, Stories Untold, GlitchHiker
+- [ ] Use system behavior as narrative (prompts glitching, outputs lying, files rewriting)
+- [ ] No jumpscares — dread comes from meta disobedience
+- [ ] System watches user, interrupts flow, breaks fourth wall
+- [ ] Filesystem used as narrative device: you explore it, it explores back
+- [ ] Build atop node.zero shellEngine but with stripped-down UI and tighter control of pacing
+
+**Note:** Parked here to avoid distraction. DO NOT start until node.zero is complete and sealed.---
 
 ## 🧭 Design Rule of Thumb
 > **Does this feature make the system more *alive*, or just more *complete*?**
