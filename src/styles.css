@@ -200,7 +200,11 @@ html, body {
   color: #001100;
   box-shadow: 0 0 8px #00FF00;
 }
-
+.menu-button.selected {
+  background-color: #00ff00; /* or #005500 for a more subtle look */
+  color: black;
+  font-weight: bold;
+}
 /* --- Menu Select Dropdown Full CRT Customization --- */
 #menuOverlay select,
 #menuOverlay select:hover,
@@ -216,4 +220,31 @@ html, body {
   box-shadow: 0 0 8px #00FF00;
   outline: none; /* Kill default white focus box */
   appearance: none; /* Kill browser default styles */
+}
+/* Text speed menu buttons */
+#slowTextSpeed,
+#fastTextSpeed,
+#instantTextSpeed {
+  background-color: #000;
+  color: #ccc;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin: 4px;
+}
+
+#slowTextSpeed:hover,
+#fastTextSpeed:hover,
+#instantTextSpeed:hover {
+  background-color: #222;
+  color: #fff;
+}
+
+#slowTextSpeed.selected,
+#fastTextSpeed.selected,
+#instantTextSpeed.selected {
+  background-color: #00ff00;
+  color: black;
+  font-weight: bold;
+  border-color: #00ff00;
 }

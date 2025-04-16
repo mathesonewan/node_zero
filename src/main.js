@@ -4,6 +4,9 @@ import { initLogin, outputIntro } from './loginManager.js';
 import { handleKeyInput } from './inputManager.js';
 import fs from './filesystem.js';
 import { setFileSystem } from './filesystemManager.js';
+import { initializeMenu } from './menuManager.js';
+
+initializeMenu(); // 👈 Add this
 
 
 // 1. Set up the terminal
