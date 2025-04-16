@@ -1,17 +1,6 @@
-const narrative = {
-  intro: [
-    "[ OK ] Starting systemd-udevd.service...",
-    "[ OK ] Mounting /boot...",
-    "[ OK ] Loading kernel modules...",
-    "[ OK ] Starting hostname service...",
-    "[ OK ] Starting Authorization Manager...",
-    "[ OK ] Starting Network Manager...",
-    "[ OK ] Reached target Network is Online.",
-    "[ OK ] Starting Secure Boot Controller SBC_1...",
-    "[ OK ] Starting Authentication Daemon...",
-    "[ WARN ] Unrecognized device activity detected.",
-    "[ INFO ] System ready. Awaiting user authentication..."
-  ]
-};
-
-export default narrative;
+// narrative.js — DEPRECATED
+//
+// This file previously contained static intro text for the login boot sequence.
+// It is no longer used now that bootSequence.js handles narrative, pacing, and transitions.
+//
+// Recommendation: remove this file or replace it later with a dynamic narrativeManager system.

@@ -31,6 +31,11 @@ This file is used to carry essential project context into a clean chat session. 
 - Fallout theme logic exists but button is hidden in menu
 - Menu buttons styled consistently with `.selected` feedback
 - `styles.css` fully cleaned and structured with comments
+- Scanline and glow adjust with flicker
++ Scanline and glow adjust with flicker
++ Scanline motion uses CSS keyframe animation with `cubic-bezier` easing for smooth vertical sweep
++ Each flicker tier modifies scanline animation duration and easing curve for different visual character
++ Visual behavior is driven purely by CSS — no JS canvas or DOM draw routines are used
 
 ---
 
@@ -71,5 +76,12 @@ This file is used to carry essential project context into a clean chat session. 
 - Avoid re-reviewing files like `menuManager.js` or `visualFXManager.js` unless modified
 
 ---
+
+## 👉 Session Safeguards
++ Always assume ChatGPT has not seen actual code unless files are re-uploaded during the current session.
++ Never suggest implementation changes without explicitly requesting the relevant source files first.
++ RESET.md establishes architecture and design intent — but code logic must be confirmed per-session.
+
+
 
 **End of RESET.md**

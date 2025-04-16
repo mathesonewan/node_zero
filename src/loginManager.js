@@ -1,6 +1,5 @@
 // loginManager.js
 
-import narrative from './narrative.js';
 import { getTypingDelay } from './terminalHandler.js';
 import systems from './systems.js';
 import state, { resetSessionState } from './stateManager.js';
@@ -17,40 +16,13 @@ export async function initLogin(termInstance, refreshLineInstance) {
 }
 
 export async function outputIntro() {
-  if (!settings.skipIntro) await delay(1500);
-
-  for (const line of narrative.intro) {
-    await typeNarrativeLine(line);
-    if (!settings.skipIntro) await delay(300);
-  }
-
+  // Skip boot narrative — now handled by bootSequence.js
   state.pendingLogin = '10.10.10.99';
   state.terminal.writeln("\r\nConnecting to SBC_1...");
   state.awaitingUsername = true;
   state.commandBuffer = '';
   state.cursorPosition = 0;
   refreshPrompt('username');
-}
-
-
-async function typeNarrativeLine(line) {
-  if (settings.instantText) {
-    state.terminal.writeln(line);
-    return;
-  }
-
-  for (const char of line) {
-    state.terminal.write(char);
-    if (getTypingDelay() > 0) {
-      await delay(getTypingDelay());
-    }
-  }
-  state.terminal.write('\r\n');
-}
-
-
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // This function assumes Enter has been pressed

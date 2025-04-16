@@ -19,98 +19,101 @@ Welcome to the dev side of `node.zero`: a modular, CRT-styled terminal simulatio
 - `settings.js` — persistent config (e.g., `instantText`, `typingDelay`)
 - `filesystem.js` — base filesystem structure
 - `fsTemplates.js` — cloned templates for per-machine FS
-- `loginManager.js` — handles intro, login, and prompt boot
-- `menuManager.js` — UI overlay with speed and flicker controls (theming temporarily disabled)
-- `visualFXManager.js` — controls CRT visuals like flicker, scanline, skew
+- `filesystemManager.js` — runtime FS logic
+- `loginManager.js` — handles login sequence and credential routing
+- `menuManager.js` — UI overlay with speed and flicker controls (theming disabled)
+- `visualFXManager.js` — CRT visual logic (flicker, scanline, burst)
+- `inputManager.js` — terminal input parsing and command matching
+- `outputManager.js` — print functions: `termPrint()`, `termTypeLine()`, `termClear()`
 
 ---
 
 ## 📂 Commands
 
-All commands are implemented as named exports inside `/commands/`. For example:
+All commands are defined as separate files in `/commands/`.
+Each is a named export and handled manually in the switch logic of `inputManager.js`.
 
-<!--
-Note: Code block formatting below is commented out to prevent markdown rendering issues
-in some preview engines. Edit with caution.
--->
+```js
+// Example: /commands/ls.js
+export function lsCommand(args) {
+  // command logic
+}
+```
 
-//```js
-// export function lsCommand(args) { ... }
-// export function cdCommand(args) { ... }
-//```
-
-**Implemented commands:**
+### ✅ Implemented Commands
 - `ls`
-- `cd` — supports multi-level paths (e.g., `cd home/user`)
-- `cat` — includes file/dir detection
+- `cd` — supports full path chaining (`cd etc/network`) and relative (`cd ..`)
+- `cat` — supports file vs directory detection
 - `clear`
 - `help`
+- `ssh` — fake network jump to secondary machine
+- `nmap` — fake subnet scanner
+- `ping` — fake success/fail ping
+- `ifconfig` — fake network device readout
 
-Commands **do not** use a global dispatcher like `runCommand()`. Routing is **explicitly mapped** from input.
+### 🔒 Not Implemented (by design)
+- `mkdir`, `touch`, `echo`, etc. — read-only simulation
+- No dispatcher system like `runCommand()` — command routing is explicit
 
-All output is printed using `termPrint()` for consistency.
+All command output goes through `termPrint()` or `termTypeLine()`.
 
 ---
 
 ## 🖥️ Menu / UI Features
 
-The menu overlay allows users to:
+The menu overlay includes:
+- Text speed toggle: `slow`, `fast`, `instant`
+- CRT flicker intensity control: `Stable`, `Signal Interference`, `Broken Terminal`
+- Skip Boot Sequence toggle (persists via `localStorage`)
+- Audio tick toggle (placeholder only)
 
-- Toggle **narrative text speed**: `slow`, `fast`, `instant`
-- Set **CRT flicker intensity**: `Stable CRT`, `Signal Interference`, `Broken Terminal`
-- Enable/disable **boot sequence**
-- Toggle **audio click sounds** (placeholder only)
+All settings persist via `settings.js` and apply instantly.
+Terminal focus is restored after closing the menu.
 
-Settings are saved via `localStorage` and applied using `settings.js`, `setTypingDelay()`, and `visualFXManager.js`.
-
-Terminal focus is restored after the menu closes. Visual feedback (`.selected`) is applied consistently.
-
-**Note:** Theme support is temporarily disabled due to xterm.js limitations. Button removed from UI, logic retained.
+> Theme selector has been **disabled** due to xterm.js DOM layering issues. Fallout button removed from UI, logic retained in code.
 
 ---
 
-## 🖐️ Dev Guidelines
+## 🧪 Boot & Login Flow
 
-- Use Git. Commit often. Branch for features.
-- Clarity > Cleverness. Name things properly.
-- Keep commands modular — **one file per command**.
-- `stateManager.js` is the source of runtime truth.
-- `settings.js` holds **only** persistent user prefs.
-- New commands should be testable in isolation and explicitly registered.
+- Full boot sequence triggered unless `skipIntro` is set
+- Boot includes:
+  - Faux Linux log output with `[ OK ]`, `[FAIL]`, `[SKIP]`
+  - Delays and randomness for realism
+  - `Press any key to continue...` gate
+- Final screen clear before login prompt
+- Login accepts `user@ip` format or defaults to `pendingLogin`
+- If credentials match, terminal session is launched
 
 ---
 
 ## 🧱 Style & Naming
 
 - Public name: `node.zero`
-- System-safe repo/folder name: `node_zero`
-- Internal naming: prefer `snake_case`
-- UI text: lowercase or stylized casing is fine
+- Safe folder name: `node_zero`
+- Prefer `snake_case` in filenames and variables
+- UI text styling is loose — lowercased or themed
 
 ---
 
-## 🔮 Roadmap
+## 🛠️ Development Tips
 
-- Splash screen: “Press any key to continue”
-- Simulated Linux boot sequence
-- New commands: `mkdir`, `touch`, `ssh`, `ping`, etc.
-- Dummy networked nodes (some real, some faked)
-- Visual polish: startup flicker burst, noise variation, RGB ghosting
-- Keypress-triggered distortion events
-- Scanline and vignette refinements
-- Future reimplementation of theme system using `xterm.setOption('theme', {...})`
+- Use Git. Commit often. Feature branches preferred.
+- Clarity over cleverness — name things cleanly.
+- Every command must be testable in isolation.
+- Don’t use global dispatchers.
+- State always lives in `stateManager.js` — treat it as truth.
 
 ---
 
-## 🚀 Getting Started
+## 📦 Project Setup
 
-1. Clone the repo
-2. Open in VS Code or your browser of choice
-3. Run `index.html` locally or deploy via GitHub Pages
-4. Open the terminal, click the menu, tweak settings
-5. Start hacking
+```bash
+# No build tools required
+# Just open index.html in a browser
+```
 
 ---
 
-This thing’s held together with **care** and **chaos**.  
-Welcome aboard.
+This project is held together with care, spite, and caffeine.
+Use the menu. Break the terminal. Stay weird.

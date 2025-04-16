@@ -20,6 +20,11 @@ setFileSystem(fs);
 
 // 4. Start the login flow
 setTimeout(async () => {
-  await initLogin(state.terminal, refreshLine); // state.terminal will already be set by now
-  await outputIntro();
+  try {
+    const { startBootSequence } = await import('./bootSequence.js');
+    await startBootSequence();
+  } catch (err) {
+    console.error("Boot sequence failed:", err);
+  }
 }, 200);
+

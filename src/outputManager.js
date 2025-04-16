@@ -26,10 +26,21 @@ export function termClear() {
 /**
  * Write a line with simulated typing (optional for effect).
  */
-export async function termTypeLine(text, delay = 20) {
-  for (const char of text) {
+export async function termTypeLine(line, delay = 10) {
+  console.log('🖋️ termTypeLine called with:', line);
+
+  if (!state.terminal) {
+    console.warn('⚠️ termTypeLine: No terminal instance found');
+    return;
+  }
+
+  for (let char of line) {
     state.terminal.write(char);
-    await new Promise(res => setTimeout(res, delay));
+    await sleep(delay);
   }
   state.terminal.write('\r\n');
 }
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+

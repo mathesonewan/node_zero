@@ -1,155 +1,157 @@
-# HackSim Web Terminal - Project Documentation (Golden Copy)
+# projectdocumentation.md — node.zero (Golden Copy)
+
+This file serves as a stable implementation reference. Unlike `README.dev.md`, this includes detailed system maps, variable definitions, and technical commentary.
 
 ---
 
-## 📜 Visual Effects
+## 🎛️ Visual Effects Matrix
 
 | Effect | Status | Notes |
 |:------|:------|:------|
-| CRT Green Background | ✅ | #001100 dark radioactive green |
-| Terminal Text Glow | ✅ | Multiple green glow layers |
-| Flicker Animation | ✅ | Tiered intensity: low (smooth), medium (irregular), high (chaotic) |
-| Scanlines | ✅ | Vertical sweep with brightness scaling by intensity |
-| Noise Layer (Static + Moving) | ✅ | Two overlapping noise layers, drift included |
-| Burn-in Layer | ✅ | Subtle ghosting overlay |
-| Distortion Pulse | ⏳ | Planned: triggered by key-spam or random event |
-| Startup Flash / Burst | ⏳ | Planned: one-time CRT flash during boot |
-| Vignette/Dark Corners | ⏳ | Planned: radial gradient overlay |
-| RGB Ghosting | ⏳ | Planned: text shadow smearing at high intensity |
+| CRT Background | ✅ | #001100 radioactive green |
+| Terminal Text Glow | ✅ | Multi-layer green shadows |
+| Flicker | ✅ | 3-tier system (low, medium, high) |
+| Scanlines | ✅ | Animated vertical sweep, tied to flicker intensity |
+| Noise Layer | ✅ | Static + subtle drift overlays |
+| Burn-in / Ghosting | ✅ | Text ghosting blend layer |
+| Startup Flash | ⏳ | Planned: boot burst pulse |
+| Vignette | ⏳ | Planned: dark corners radial gradient |
+| RGB Ghosting | ⏳ | Planned: subtle chromatic offset |
 
 ---
 
-## 💻 Terminal Behavior
+## 🖥️ Terminal Emulation
 
 | Feature | Status | Notes |
 |:--------|:-------|:------|
-| Full xterm.js Integration | ✅ | FitAddon enabled |
-| Scrollbar Hidden | ✅ | Pure CRT aesthetic |
-| Responsive Resizing | ✅ | Terminal resizes with browser window |
-| Auto-scroll to Bottom | ✅ | Default xterm.js behavior |
-| Character Wrapping | ✅ | Default (not per-word) |
+| xterm.js integration | ✅ | FitAddon enabled |
+| Hidden Scrollbar | ✅ | CRT-style UX |
+| Responsive Scaling | ✅ | Resizes with window |
+| Auto-scroll | ✅ | Default behavior |
+| Char Wrapping | ✅ | Native xterm logic |
 
 ---
 
-## 🧐 System Variables
+## 🧠 State Variables
 
 | Variable | Purpose |
 |:---------|:--------|
-| `currentMachine` | Tracks current SSH machine IP |
-| `currentUsername` | Tracks logged-in username |
-| `currentHostname` | Tracks connected machine hostname (stripped `.local`) |
-| `pendingLogin` | IP address pending login |
-| `pendingUsername` | Username pending login |
-| `awaitingUsername` | Waiting for username input |
-| `awaitingPassword` | Waiting for password input |
-| `commandBuffer` | Current command input |
-| `commandHistory` | Array of previous commands |
-| `historyIndex` | Index for cycling command history |
-| `currentPath` | Filesystem navigation path |
+| `currentMachine` | Current connected node (IP) |
+| `currentUsername` | Logged-in user |
+| `currentHostname` | Active machine hostname |
+| `pendingLogin` | IP queued for login attempt |
+| `pendingUsername` | Temp user input during login |
+| `awaitingUsername` | Awaiting username entry |
+| `awaitingPassword` | Awaiting password entry |
+| `commandBuffer` | Current typed command text |
+| `commandHistory` | Array of all previous commands |
+| `historyIndex` | Navigation through history |
+| `currentPath` | Current working directory |
 
 ---
 
-## 📂 File Structure
+## 📁 File Overview
 
 | File | Purpose |
 |:-----|:--------|
-| `index.html` | Core layout: Terminal + Visual Layers + Menu |
-| `styles.css` | CRT theming, menu styling, animations |
-| `main.js` | Terminal setup, boot, menu init |
-| `narrative.js` | (Unreviewed) Intro narrative text engine |
-| `filesystem.js` | Base filesystem structure |
-| `fsTemplates.js` | Per-machine filesystem cloning |
-| `filesystemManager.js` | ✅ | Modular FS logic, safe fallback handling |
-| `systems.js` | (Unreviewed) Machine credentials/IP registry |
-| `stateManager.js` | ✅ | Central runtime state store |
-| `inputManager.js` | ✅ | Raw input + command parsing, stable structure |
-| `outputManager.js` | ✅ | `termPrint`, `termClear`, typing system |
-| `settings.js` | ✅ | Persistent state handling via localStorage |
-| `visualFXManager.js` | ✅ | Flicker tiers, theming (disabled), scanlines |
-| `menuManager.js` | ✅ | UI overlay logic, `.selected` sync, checkbox handlers |
-| `loginManager.js` | ✅ | Boot + login logic |
-| `terminalHandler.js` | ✅ | Typing delay + prompt helper |
-| `animations.js` | (Unreviewed) unknown purpose — likely CRT/narrative |
+| `index.html` | Terminal shell + overlay entrypoint |
+| `styles.css` | Core CRT layout + menu styling |
+| `main.js` | Boot and top-level init control |
+| `filesystem.js` | Filesystem structure base |
+| `fsTemplates.js` | Per-node FS templates |
+| `filesystemManager.js` | Runtime FS operations |
+| `systems.js` | Machine IP and credential map |
+| `stateManager.js` | Single truth runtime store |
+| `inputManager.js` | Command parsing + routing |
+| `outputManager.js` | Output helpers (type, print, clear) |
+| `settings.js` | localStorage management |
+| `visualFXManager.js` | Flicker/scanline/effects controller |
+| `menuManager.js` | UI panel logic, toggle, sync |
+| `loginManager.js` | Login logic + post-boot setup |
+| `terminalHandler.js` | Prompt refresh + typing delay |
+| `bootSequence.js` | Full boot experience manager |
 
 ---
 
-## 🗂️ Menu (Overlay)
+## 🗂️ Menu Overlay
 
 | Element | Status | Notes |
 |:--------|:-------|:------|
-| Menu Button (top right) | ✅ | Green themed, fixed position |
-| Menu Overlay | ✅ | Full screen, semi-transparent black |
-| Close (X) Button | ✅ | Repositioned for easier click-back from MENU |
-| Audio Toggle | ✅ | Wired, setting persisted (placeholder only) |
-| Text Speed Setting | ✅ | Fully wired with localStorage persistence |
-| Skip Boot Sequence | ✅ | Fully wired with persistence |
-| CRT Flicker Intensity Buttons | ✅ | Fully wired, visually distinct tiers |
-| Theme Color Selector | ❌ | Feature disabled, Fallout button hidden (logic preserved) |
+| Menu Button | ✅ | Top right, green border |
+| Overlay Panel | ✅ | Full screen, semi-transparent |
+| Close Button (X) | ✅ | Accessible via hover or click |
+| Audio Toggle | ✅ | Placeholder wiring only |
+| Text Speed Select | ✅ | Controls typing pace |
+| Skip Boot Checkbox | ✅ | Fully wired, localStorage-backed |
+| CRT Flicker Select | ✅ | Cycles intensity tier visually |
+| Theme Selector | ❌ | Fallout option removed — xterm override issues |
 
 ---
 
-## 🔧 Commands Implemented
+## 🔧 Available Commands
 
 | Command | Status | Notes |
 |:--------|:-------|:------|
-| `ls` | ✅ | Lists contents of current directory |
-| `cd <dir>` | ✅ | Change into subdirectory |
-| `cd ..` | ✅ | Move up one directory |
-| `cd /` | ✅ | Reset to root |
-| `cat <file>` | ✅ | Display file contents |
-| `clear` | ✅ | Clears the terminal screen |
-| `ssh user@ip` | ✅ | SSH into a remote machine |
-| `nmap subnet` | ✅ | Fake network scan |
-| `ping ip` | ✅ | Fake ping response |
-| `ifconfig` | ✅ | Fake network adapter config |
-| `help` | ✅ | Lists available commands |
+| `ls` | ✅ | Lists current directory |
+| `cd` | ✅ | Handles relative and root paths |
+| `cat` | ✅ | Reads text content |
+| `clear` | ✅ | Clears screen |
+| `ssh` | ✅ | Switches node via auth |
+| `nmap` | ✅ | Reveals machine IPs |
+| `ping` | ✅ | Fake up/down check |
+| `ifconfig` | ✅ | Shows fake device info |
+| `help` | ✅ | Lists valid commands |
 
-**Note:** Project will not support fake write ops like `mkdir`. Command routing will remain explicit.
+Note: **No write commands supported** (`mkdir`, `touch`, etc. intentionally omitted).
 
 ---
 
-## 📻 Network Simulation
+## 🌐 Simulated Network
 
 | Feature | Status | Notes |
 |:--------|:-------|:------|
-| SSH Connections | ✅ | User/pass authentication |
-| Hostname Handling | ✅ | `.local` stripped for prompt clarity |
-| System Discovery (nmap) | ✅ | Subnet scanning |
-| Fake Ping | ✅ | Up/down detection |
+| SSH Login | ✅ | IP + user/password auth |
+| Hostname Stripping | ✅ | Removes `.local` for brevity |
+| Discovery (nmap) | ✅ | Fake subnet map |
+| Ping | ✅ | Returns `up/down` for known machines |
 
 ---
 
-## ⛔️ Known Issues
+## 🧪 Boot Sequence Notes
+
+- Full log sequence includes ~40 lines of `[ OK ]`, `[WARN]`, `[FAIL]`, `[SKIP]`
+- Lines typed using `termTypeLine()` with random pacing delays
+- Critical lines pause longer (e.g., microcode failure)
+- Ends with "SBC_1 ready", then clears to login
+- Guarded by `skipIntro` toggle via menu → stored in `settings.js`
+
+---
+
+## 🪵 Known Issues
 
 | Issue | Impact | Notes |
-|:------|:------|:------|
-| Theme switching broken in xterm | Low | `#terminal` color ignored by xterm rendering engine |
-| Boot Narrative Text | Low | Needs full customization pass |
-| `animations.js` | Unknown | Possibly unused; verify before clean-up |
+|:------|:-------|:------|
+| xterm ignores background CSS | Low | Theme override not working |
+| `animations.js` | Unknown | Verify before deletion |
+| `narrative.js` | Deprecated | Reserved for future `narrativeManager` system |
 
 ---
 
-# 📋 Notes
+## 🧭 Internal Naming
 
-- Visual polish now matches design intent
-- Menu system is fully operational
-- Flicker and CRT effects upgraded for realism
-- Theming logic retained but UI disabled
-- Input, output, and file logic reviewed and stable
+| Label | Meaning |
+|:------|:--------|
+| `node.zero` | Public/project name |
+| `node_zero` | Safe version (filepaths, URLs, etc.) |
 
 ---
 
-# 📋 Additional Updates (2024-05-18+)
+## 🗒️ Dev Notes
 
-## 📦 Structural Modularization & Preparation
+- Visual fidelity confirmed across flicker tiers
+- Menu reflects full persistent state
+- Login/boot system now modular
+- File structure is logically grouped by purpose
 
-| Change | Status | Notes |
-|:-------|:-------|:------|
-| Created `stateManager.js` | ✅ | Centralized state management module |
-| Created `inputManager.js` | ✅ | Dedicated terminal input handler |
-| Refactored login and filesystem logic | ✅ | Modular, isolated logic per concern |
-| Separated local vs remote machine logic | ✅ | Handles networked node simulation |
-| Added `visualFXManager.js` | ✅ | CRT flicker/scanline/delay management |
-| Menu fully wired | ✅ | Buttons, checkboxes, and settings now fully interactive |
+> This doc reflects implemented behavior. For roadmap/ideas, see `TODO.md` and `blackbox.md`.
 
-**System is modular and stable. Next phase: boot sequence, splash animation, glitch enhancements, and narrative refinement.**

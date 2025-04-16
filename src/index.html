@@ -11,7 +11,9 @@
   <!-- Custom CRT Styles -->
   <link rel="stylesheet" href="./styles.css">
 </head> 
-<body>
+<body class="boot-blackout">
+  <div id="boot-blackout-layer"></div>
+
   <div id="layout">
     <div id="terminal"></div>
     <div id="scanline"></div>
@@ -26,13 +28,12 @@
     <div id="menuOverlay">
       <button id="closeMenu">X</button>
 
-      <!-- Menu Settings (future wiring needed) -->
       <div class="menuSetting">
         <label for="audioToggle">Audio:</label>
         <input type="checkbox" id="audioToggle">
       </div>
 
-        <div class="menuSetting">
+      <div class="menuSetting">
         <label for="skipBoot">Skip Boot Sequence:</label>
         <input type="checkbox" id="skipBoot">
       </div>
@@ -43,24 +44,19 @@
         <button id="flickerMedium">Signal Interference</button>
         <button id="flickerHigh">Broken Terminal</button>
       </div>
-      
 
       <div class="menuSetting">
         <label>Narrative Text Speed:</label><br>
         <button id="slowNarrativeSpeed">Slow</button>
         <button id="fastNarrativeSpeed">Fast</button>
         <button id="instantNarrativeSpeed">Instant</button>
-
       </div>
-      
-      
 
       <div class="menuSetting">
         <label>Theme:</label><br>
         <button id="themeGreen">The Matrix</button>
-  <!-- <button id="themeYellow">Fallout</button> -->
-</div>
-      
+        <!-- <button id="themeYellow">Fallout</button> -->
+      </div>
     </div>
   </div>
 
