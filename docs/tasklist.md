@@ -4,16 +4,25 @@ This file tracks actual, in-progress development. Use it to coordinate short-ter
 
 ---
 
+## ✅ Completed This Session
+- [x] Final boot sequence polish (randomized pacing, fail/warn logic, press-any-key block)
+- [x] Clear screen after boot before login prompt
+- [x] Ensure `skipIntro` logic works cleanly and avoids dupe output
+- [x] Add CRT boot burst (flash effect)
+- [x] Fix terminal visibility after blackout (removed opacity traps)
+- [x] Confirm terminal output via `termTypeLine()` is live
+- [x] Clean `bootSequence.js` — self-contained, stable
+- [x] Spinner glyph loop support in boot output
+
+---
+
 ## 🔧 Immediate Tasks
-- [ ] Final boot sequence polish (randomized pacing, fail/warn logic, press-any-key block)
-- [ ] Clear screen after boot before login prompt
-- [ ] Ensure `skipIntro` logic works cleanly and avoids dupe output
-- [ ] Remove all `narrative.js` calls except placeholder import
+- [ ] Implement commands for working at the network layer (e.g. `traceroute`, `whois`, `netstat`)
+- [ ] Begin building the initial mission logic
 
 ---
 
 ## 🧪 Test & Confirm
-- [ ] Typing delays behave correctly across all `termTypeLine` calls
 - [ ] Login prompt is always reached after skip OR full boot
 - [ ] Menu toggle for boot skip reflects persistent state
 - [ ] `refreshPrompt()` doesn't silently fail — safe fallback logic works
@@ -21,6 +30,7 @@ This file tracks actual, in-progress development. Use it to coordinate short-ter
 ---
 
 ## 🧼 Cleanup / Refactors
+- [ ] Remove all `narrative.js` calls except placeholder import
 - [ ] Strip legacy intro line from `outputIntro()`
 - [ ] Drop `typeNarrativeLine()` unless reused
 - [ ] Archive or comment-out unused narrative stubs
@@ -28,8 +38,7 @@ This file tracks actual, in-progress development. Use it to coordinate short-ter
 
 ---
 
-## 🪟 Visual / UX Enhancements
-- [ ] Add CRT boot burst (flash or flicker spike)
+## 🪟 Visual / UX Enhancements (on hold)
 - [ ] Shake effect or vibration pulse on system wake
 - [ ] Future: cursor blink toggle or pacing adjustment
 
@@ -37,10 +46,10 @@ This file tracks actual, in-progress development. Use it to coordinate short-ter
 
 ## 🧭 Future Candidates (short-term)
 - [ ] `narrativeManager` stub (file-bound message triggers)
-- [ ] Spinner glyph loop support in boot output
 - [ ] Soft-disable commands like `mkdir`, `touch`, `echo` (return "read-only FS")
 - [ ] Alternate boot flags (`--safe`, `--verbose`) passed via state injection
 
 ---
 
-> This replaces stray TODOs from dev logs, README, and blackbox.md.
+> Visual work is paused — focus is now on network systems and mission framework.
+
