@@ -41,6 +41,11 @@ This file tracks actual, in-progress development. Use it to coordinate short-ter
 ## 🪟 Visual / UX Enhancements (on hold)
 - [ ] Shake effect or vibration pulse on system wake
 - [ ] Future: cursor blink toggle or pacing adjustment
+- [ ] Migrate scanline, flicker, and boot burst effects to `fx-layer` canvas for cleaner CRT simulation
+  - `fx-layer` is visual-only and stacked above `#terminal`
+  - Intended for refraction, distortion, glow, and polished glass effects
+  - Will replace DOM-based scanlines and flicker overlays
+
 
 ---
 

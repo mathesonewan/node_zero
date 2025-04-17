@@ -33,13 +33,6 @@ Welcome to the dev side of `node.zero`: a modular, CRT-styled terminal simulatio
 All commands are defined as separate files in `/commands/`.
 Each is a named export and handled manually in the switch logic of `inputManager.js`.
 
-```js
-// Example: /commands/ls.js
-export function lsCommand(args) {
-  // command logic
-}
-```
-
 ### ✅ Implemented Commands
 - `ls`
 - `cd` — supports full path chaining (`cd etc/network`) and relative (`cd ..`)

@@ -27,15 +27,13 @@ This file is used to carry essential project context into a clean chat session. 
 - Visual effects handled by `visualFXManager.js`
 - Three flicker tiers: low (soft pulse), medium (irregular blink), high (chaotic strobe)
 - Scanline and glow adjust with flicker
+- Scanline motion uses CSS keyframe animation with `cubic-bezier` easing for smooth vertical sweep
+- Each flicker tier modifies scanline animation duration and easing curve for different visual character
+- Visual behavior is driven purely by CSS — no JS canvas or DOM draw routines are used
 - Theme switching disabled due to xterm.js override conflicts
 - Fallout theme logic exists but button is hidden in menu
 - Menu buttons styled consistently with `.selected` feedback
 - `styles.css` fully cleaned and structured with comments
-- Scanline and glow adjust with flicker
-+ Scanline and glow adjust with flicker
-+ Scanline motion uses CSS keyframe animation with `cubic-bezier` easing for smooth vertical sweep
-+ Each flicker tier modifies scanline animation duration and easing curve for different visual character
-+ Visual behavior is driven purely by CSS — no JS canvas or DOM draw routines are used
 
 ---
 
@@ -49,6 +47,23 @@ This file is used to carry essential project context into a clean chat session. 
 - `inputManager.js` — keyboard input, command parsing, login gatekeeping
 - `outputManager.js` — consistent output helpers (`termPrint`, etc)
 - `commands/*.js` — modular per-command implementations
+
+---
+
+## 📚 Project Documentation Files
+
+These support files provide full project context. ChatGPT should assume it does **not** have access to these unless they are explicitly uploaded during the current session.
+
+| File                    | Purpose                                                                 |
+|-------------------------|-------------------------------------------------------------------------|
+| `README.dev.md`         | What is currently implemented — the ground truth for live systems       |
+| `projectdocumentation.md` | Detailed breakdowns of implementation decisions, component summaries, and rationale |
+| `blackbox.md`           | Deferred ideas, speculative features, future architecture               |
+| `RESET.md`              | Session handshake, tone control, formatting rules, model constraints    |
+| `tasklist.md`           | Active task tracking, system-level TODOs (maintained manually)          |
+| `changelog.md`          | History of completed changes and feature locks                          |
+
+**Note:** ChatGPT must always request relevant files before suggesting changes or referencing implementation details. Do not assume prior content unless it was uploaded this session.
 
 ---
 
@@ -78,9 +93,9 @@ This file is used to carry essential project context into a clean chat session. 
 ---
 
 ## 👉 Session Safeguards
-- Always assume ChatGPT has not seen actual code unless files are re-uploaded during the current session.
-- Never suggest implementation changes without explicitly requesting the relevant source files first.
-- RESET.md establishes architecture and design intent — but code logic must be confirmed per-session.
+- Always assume ChatGPT has not seen actual code unless files are re-uploaded during the current session
+- Never suggest implementation changes without explicitly requesting the relevant source files first
+- RESET.md establishes architecture and design intent — but code logic must be confirmed per-session
 
 ---
 
@@ -103,6 +118,6 @@ This file is used to carry essential project context into a clean chat session. 
 - This avoids formatting issues, context loss, and supports user’s manual workflow
 - Respect this even if OpenAI enforces Canvas as a default interface
 
-
+---
 
 **End of RESET.md**

@@ -29,18 +29,37 @@ These are system ideas that belong to node.zero, but haven’t earned their plac
 
 ---
 
-## 🚀 Terminal FX: Glitches, Distortion, Startups
-$1
+## 🎛 Terminal FX: Glitches, Distortion, Startups
+
+- Add optional screen glitches (wavey offset, chromatic fringing, tear line drift)
+- Simulated "screen warmup" effect during boot
+- Broken cursor blink (irregular intervals or flicker)
+- Screen geometry warp (curved edges or subtle CRT bend distortion)
 
 ---
 
-## 💣 Terminal Payload: Fake Encryption Sequence
-$1
+## 🔐 Terminal Payload: Fake Encryption Sequence
+
+- Simulated decryption animation triggered by file open or unlock
+- Visuals like:
+  - Random hex stream with matching characters resolving
+  - Static or corrupted lines
+  - “Noise-to-meaning” morph effect
+- Optional `decrypt` command to simulate process with typing output
 
 ---
 
 ## 🧮 Audio Sequencing: Pattern Generation + Tracker Logic
-$1
+
+- Fake audio sequencing engine shown in terminal
+- Visual style mimics Impulse Tracker / ProTracker:
+  - Hex-based timing, sample/channel layout
+- Could support narrative beats ("decode a rhythm", "corrupt sample stream")
+- Potential commands:
+  - `trackload file.mod` → loads fake pattern grid
+  - `trackscan` → generates log of anomalies
+- Later: allow export of fake `.mod`-style files as log text
+
 
 ---
 
@@ -69,19 +88,39 @@ $1
 ---
 
 ## 🤖 AI or Simulated Operators
-$1
+
+- Generate fake activity logs in background
+- Output could include:
+  - `[SIM] node3.local received shutdown`
+  - `[SYS] Watchdog reset issued by op-7`
+- These logs could appear:
+  - At boot
+  - On idle timeout
+  - In response to `monitor` command or system mode
+- Not interactive but contributes to atmosphere — may hint at something drifting or wrong
+
+
+## 🧱 Framework / Reuse
+
+- Consider extracting core engine to support multiple terminal-driven games
+- Runtime should support:
+  - Custom command definitions
+  - Custom boot sequences
+  - Custom visual themes
+- Could support educational, narrative, or sim-style modules on top of node.zero core
+
+
+## ⚙️ Shell Engine Extraction
+
+- Extract boot manager, shell, prompt renderer into reusable "node.shell" module
+- Support for:
+  - Custom IP
+  - Login flow
+  - FS mounting per node
+- Nodes can simulate different OS versions, FS corruption, partial access
 
 ---
 
-## 🧰 Framework / Reuse Potential
-$1
-
----
-
-## 🕳️ Shell Engine Extraction (for Future Projects)
-$1
-
----
 
 ## 🧨 CLI Horror Game (Post-node.zero)
 - [ ] Build psychological horror experience fully within a terminal interface
@@ -107,7 +146,9 @@ $1
 - Inspired by player experience with LLM drift, cognitive fragility, and the illusion of continuity in human mimicry
 
 
-**Note:** Parked here to avoid distraction. DO NOT start until node.zero is complete and sealed.---
+**Note:** Parked here to avoid distraction. DO NOT start until node.zero is complete and sealed.
+
+---
 
 ## 🧭 Design Rule of Thumb
 > **Does this feature make the system more *alive*, or just more *complete*?**

@@ -153,5 +153,5 @@ Note: **No write commands supported** (`mkdir`, `touch`, etc. intentionally omit
 - Login/boot system now modular
 - File structure is logically grouped by purpose
 
-> This doc reflects implemented behavior. For roadmap/ideas, see `TODO.md` and `blackbox.md`.
+> This doc reflects implemented behavior. For roadmap/ideas, see `tasklist.md` and `blackbox.md`.
 
