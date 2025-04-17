@@ -7,21 +7,32 @@ export function cdCommand(args) {
     return;
   }
 
-  const parts = args[1].split('/').filter(Boolean); // handles things like "cd /home/user"
+  const inputPath = args[1];
+  const parts = inputPath.split('/').filter(Boolean);
+  let newPath = inputPath.startsWith('/') ? [] : [...state.currentPath];
   let dir = state.machines[state.currentMachine]?.fs['/'];
-  let newPath = [...state.currentPath];
 
+  // Traverse to starting point (based on newPath)
+  for (const segment of newPath) {
+    if (!dir?.contents?.[segment] || dir.contents[segment].type !== 'dir') {
+      termPrint(`${segment} is not a directory or doesn't exist`);
+      return;
+    }
+    dir = dir.contents[segment];
+  }
+
+  // Now traverse the new parts
   for (const part of parts) {
-    if (part === '/') {
-      newPath = [];
+    if (part === '..') {
+      newPath.pop();
+      // Reset dir and walk again
       dir = state.machines[state.currentMachine]?.fs['/'];
-    } else if (part === '..') {
-      if (newPath.length > 0) {
-        newPath.pop();
-        dir = state.machines[state.currentMachine]?.fs['/'];
-        for (const sub of newPath) {
-          dir = dir.contents?.[sub];
+      for (const segment of newPath) {
+        if (!dir?.contents?.[segment] || dir.contents[segment].type !== 'dir') {
+          termPrint(`${segment} is not a directory or doesn't exist`);
+          return;
         }
+        dir = dir.contents[segment];
       }
     } else {
       if (!dir?.contents?.[part] || dir.contents[part].type !== 'dir') {

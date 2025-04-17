@@ -2,6 +2,7 @@ import settings from './settings.js';
 import state from './stateManager.js';
 import { termClear, termPrint, termTypeLine } from './outputManager.js';
 import { initLogin, outputIntro } from './loginManager.js';
+import { refreshPrompt } from './refreshPrompt.js';
 
 export async function startBootSequence() {
   console.log('🔥 Boot sequence started');
