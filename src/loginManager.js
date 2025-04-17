@@ -29,11 +29,10 @@ export async function outputIntro(targetIP = null) {
   state.commandBuffer = '';
   state.cursorPosition = 0;
 
-  refreshPrompt('username');
-
-  // 🔽 Ensure a new line is printed so the prompt is visible
-  state.terminal.write('\r\n');
+  // 🔥 Manually write prompt instead of using refreshPrompt()
+  state.terminal.write('\r\nUsername: ');
 }
+
 
 
 // This function assumes Enter has been pressed
