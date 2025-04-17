@@ -92,6 +92,21 @@ $1
 - [ ] Filesystem used as narrative device: you explore it, it explores back
 - [ ] Build atop node.zero shellEngine but with stripped-down UI and tighter control of pacing
 
+---
+
+## 🧠 Horror Game LLM Integration Concept
+
+- Use a local, lightweight LLM (e.g. GPT-J, Mistral 7B, TinyLlama) to simulate an assistant degrading over time
+- Model choice prioritizes fragility over intelligence — subtle hallucinations and token unpredictability are a feature
+- LLM should run locally as part of the game payload (e.g. via `llama.cpp` or `ollama`)
+- Integrate a cipher layer or token transformation pipeline to intentionally distort the model's input
+  - Acts as a control layer for inducing "personality entropy"
+  - Allows narrative control over AI drift without hardcoding every response
+- Accept and weaponize failure modes: memory loss, repetition, over-politeness, incoherent tone
+- Drift is gradual — goal is emotional unease, not glitch horror
+- Inspired by player experience with LLM drift, cognitive fragility, and the illusion of continuity in human mimicry
+
+
 **Note:** Parked here to avoid distraction. DO NOT start until node.zero is complete and sealed.---
 
 ## 🧭 Design Rule of Thumb
