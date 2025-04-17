@@ -3,6 +3,7 @@ import state from './stateManager.js';
 import { termClear, termPrint, termTypeLine } from './outputManager.js';
 import { initLogin, outputIntro } from './loginManager.js';
 import { refreshPrompt } from './refreshPrompt.js';
+import { refreshLine } from './terminalHandler.js';
 
 export async function startBootSequence() {
   console.log('🔥 Boot sequence started');
@@ -15,13 +16,23 @@ export async function startBootSequence() {
   if (settings.skipIntro) {
     termClear();
     termPrint('[Boot Skipped]');
-    state.pendingLogin = '10.10.10.99';
+  
+    await initLogin(state.terminal, refreshLine);
+  
+    state.currentUser = null;
+    state.loginComplete = false;
     state.awaitingUsername = true;
+    state.awaitingPassword = false;
+    state.pendingLogin = null;
     state.commandBuffer = '';
     state.cursorPosition = 0;
-    refreshPrompt('username');
+  
+    await outputIntro('10.10.10.99');
+  
     return;
   }
+  
+  
 
   // Phase 0 — Blackout + Boot Burst
   const blackout = document.getElementById('boot-blackout-layer');

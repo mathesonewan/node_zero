@@ -15,20 +15,39 @@ export async function initLogin(termInstance, refreshLineInstance) {
   refreshLineFunc = refreshLineInstance;
 }
 
-export async function outputIntro() {
-  // Skip boot narrative — now handled by bootSequence.js
-  state.pendingLogin = '10.10.10.99';
-  state.terminal.writeln("\r\nConnecting to SBC_1...");
+export async function outputIntro(targetIP = null) {
+  // If provided, simulate network login
+  if (targetIP) {
+    state.pendingLogin = targetIP;
+    state.terminal.writeln(`\r\nConnecting to ${targetIP}...`);
+  } else {
+    state.pendingLogin = null;
+    state.terminal.writeln(`\r\nWelcome to SBC_1`);
+  }
+
   state.awaitingUsername = true;
   state.commandBuffer = '';
   state.cursorPosition = 0;
+
   refreshPrompt('username');
+
+  // 🔽 Ensure a new line is printed so the prompt is visible
+  state.terminal.write('\r\n');
 }
+
 
 // This function assumes Enter has been pressed
 export function handleLoginInput() {
+  const input = state.commandBuffer.trim();
+
   if (state.awaitingUsername) {
-    state.pendingUsername = state.commandBuffer.trim();
+    if (!input) {
+      state.terminal.writeln('Login error: username required.');
+      refreshPrompt('username');
+      return;
+    }
+
+    state.pendingUsername = input;
     state.commandBuffer = '';
     state.cursorPosition = 0;
     state.awaitingUsername = false;
@@ -40,17 +59,16 @@ export function handleLoginInput() {
   else if (state.awaitingPassword) {
     const target = systems.find(sys => sys.ip === state.pendingLogin);
 
-    if (target && state.pendingUsername === target.username && state.commandBuffer === target.password) {
+    if (target && state.pendingUsername === target.username && input === target.password) {
       state.terminal.writeln('\r\nWelcome to ' + target.hostname + '!');
       const machineName = target.hostname.replace('.local', '');
       resetSessionState(state.pendingUsername, machineName);
 
-      // Set up the machine's FS if it's a real target
       if (!state.machines[machineName]) {
         state.machines[machineName] = {
           fs: fsTemplates.default(),
           users: {
-            [state.pendingUsername]: state.commandBuffer
+            [state.pendingUsername]: input
           }
         };
       }
@@ -63,7 +81,7 @@ export function handleLoginInput() {
 
     // Now clear, after everything
     state.pendingUsername = '';
-    state.pendingLogin = '10.10.10.99';
+    state.pendingLogin = null;
     state.commandBuffer = '';
     state.cursorPosition = 0;
 
